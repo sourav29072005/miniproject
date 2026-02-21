@@ -1,0 +1,62 @@
+.payment-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f4f6f9;
+}
+
+.payment-card {
+  width: 350px;
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.payment-method{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:10px 12px;
+  border:1px solid #e6e6e6;
+  border-radius:10px;
+  margin:10px 0;
+  cursor:pointer;
+}
+
+.pay-now-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* RED CANCEL BUTTON */
+.cancel-pay-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background-color: #ff4d4d;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.cancel-pay-btn:hover {
+  background-color: #e63939;
+}
+
+.cancel-pay-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

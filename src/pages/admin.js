@@ -1,0 +1,48 @@
+import { useNavigate } from "react-router-dom";
+import "../styles/admin.css";
+
+function Admin({ setIsLoggedIn, setIsAdmin }) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // 1. Clear local storage
+    localStorage.removeItem("user");
+
+    // 2. Reset states in App.js
+    setIsLoggedIn(false);
+    setIsAdmin(false);
+
+    // 3. Redirect to login page
+    navigate("/login");
+  };
+
+  return (
+    <div className="admin-container">
+      <div className="admin-header">
+        <h1 className="admin-title">Admin Dashboard</h1>
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
+
+      <div className="admin-grid">
+        <div className="admin-card" onClick={() => navigate("/admin/hostels")}>
+          <h2>Manage Hostels</h2>
+          <p>Add, Edit or Remove Hostel Listings</p>
+        </div>
+
+        <div className="admin-card" onClick={() => navigate("/admin/items")}>
+          <h2>Manage Items</h2>
+          <p>Remove or Control Marketplace Listings</p>
+        </div>
+
+        <div className="admin-card">
+          <h2>Manage Users</h2>
+          <p>Coming Soon...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Admin;
