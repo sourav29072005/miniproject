@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useAuth } from "./context/AuthContext";
 
 import Home from "./pages/home";
 import Register from "./pages/register";
@@ -16,42 +16,29 @@ import Payment from "./pages/payment";
 import Admin from "./pages/admin";
 import AdminHostels from "./pages/AdminHostels";
 import AdminItems from "./pages/AdminItems";
-
 import HostelDetails from "./pages/HostelDetails";
 
+import ProtectedRoute from "./components/ProtectedRoute";
 import "./styles/global.css";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    if (user) {
-      setIsLoggedIn(true);
-      setIsAdmin(user.role === "admin");
-    } else {
-      setIsLoggedIn(false);
-      setIsAdmin(false);
-    }
-
-    setLoading(false);
-  }, []);
+  const { isLoggedIn, isAdmin, loading, setIsLoggedIn, setIsAdmin } = useAuth();
 
   if (loading) return null;
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* ✅ PUBLIC ROUTES */}
+        {/* PUBLIC ROUTES */}
         {!isLoggedIn && (
           <>
             <Route
               path="/login"
               element={
-                <Login setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin} />
+                <Login
+                  setIsLoggedIn={setIsLoggedIn}
+                  setIsAdmin={setIsAdmin}
+                />
               }
             />
             <Route path="/register" element={<Register />} />
@@ -59,32 +46,57 @@ function App() {
           </>
         )}
 
-        {/* ✅ ADMIN ROUTES */}
+        {/* ADMIN ROUTES */}
         {isLoggedIn && isAdmin && (
           <>
             <Route
               path="/admin"
               element={
-                <Admin setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin} />
+                <ProtectedRoute requireAdmin>
+                  <Admin
+                    setIsLoggedIn={setIsLoggedIn}
+                    setIsAdmin={setIsAdmin}
+                  />
+                </ProtectedRoute>
               }
             />
-
-            <Route path="/admin/hostels" element={<AdminHostels />} />
-            <Route path="/admin/items" element={<AdminItems />} />
-
-            {/* ✅ THIS MUST BE HERE (admin can view item details) */}
-            <Route path="/admin/item-details" element={<ItemDetails />} />
-
-            {/* If admin hits "/", send to admin dashboard */}
+            <Route
+              path="/admin/hostels"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <AdminHostels />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/items"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <AdminItems />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/item-details"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <ItemDetails />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/" element={<Navigate to="/admin" />} />
           </>
         )}
 
-        {/* ✅ NORMAL USER DASHBOARD ROUTES */}
+        {/* NORMAL USER ROUTES */}
         {isLoggedIn && !isAdmin && (
           <Route
             path="/"
-            element={<DashboardLayout setIsLoggedIn={setIsLoggedIn} />}
+            element={
+              <ProtectedRoute>
+                <DashboardLayout setIsLoggedIn={setIsLoggedIn} />
+              </ProtectedRoute>
+            }
           >
             <Route index element={<Home />} />
             <Route path="marketplace" element={<Marketplace />} />
@@ -98,7 +110,7 @@ function App() {
           </Route>
         )}
 
-        {/* ✅ FALLBACK */}
+        {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
