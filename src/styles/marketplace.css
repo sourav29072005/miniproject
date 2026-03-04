@@ -168,7 +168,7 @@
 
 .price {
   font-weight: 700;
-  color: #ff6b00;
+  color: #0b2a90;
   margin: 8px 0;
 }
 
@@ -188,7 +188,7 @@
   padding: 10px;
   border: none;
   border-radius: 8px;
-  background-color: #ff6b00;
+  background-color: #0b4db7;
   color: white;
   cursor: pointer;
   font-weight: 700;
@@ -196,7 +196,7 @@
 }
 
 .buy-btn:hover {
-  background-color: #e55d00;
+  background-color: #0b2a90;
 }
 
 /* Card wishlist heart button */

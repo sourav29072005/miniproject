@@ -18,6 +18,7 @@
 .auth-title {
   margin-bottom: 25px;
   font-weight: 600;
+  font-size: 24px;
 }
 
 /* FORM */
@@ -40,13 +41,13 @@
 
 .auth-form input:focus {
   outline: none;
-  border: 1px solid #ff6b00;
-  box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.2);
+  border: 1px solid #0b2a90;
+  box-shadow: 0 0 0 2px rgba(11, 42, 144, 0.2);
 }
 
 /* BUTTON */
 .login-btn {
-  background-color: #ff7a00;
+  background-color: #0b4db7;
   color: white;
   padding: 10px;
   border-radius: 8px;
@@ -56,12 +57,12 @@
 }
 
 .login-btn:hover {
-  background-color: #e66900;
+  background-color: #0b2a90;
 }
  /* ✅ Force login button style */
 .auth-container .login-btn {
   width: 100%;
-  background-color: #ff7a00 !important;
+  background-color: #0b4db7 !important;
   color: #fff !important;
   padding: 12px 14px;
   border: none !important;
@@ -72,5 +73,5 @@
 }
 
 .auth-container .login-btn:hover {
-  background-color: #e66900 !important;
+  background-color: #0b2a90 !important;
 }

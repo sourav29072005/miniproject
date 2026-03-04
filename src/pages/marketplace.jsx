@@ -113,7 +113,7 @@ function Marketplace() {
 
   return (
     <div className="marketplace-container">
-      <h2 className="page-title">Marketplace</h2>
+     
 
       {/* SEARCH BAR (unchanged) + FILTER + WISHLIST ICON */}
       <div className="search-container">
