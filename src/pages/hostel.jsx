@@ -40,9 +40,7 @@ function Hostel() {
   return (
     <div className="hostel-container">
 
-      <h2 className="page-title">
-        Nearby Hostels & PGs
-      </h2>
+     
 
       {hostels.length === 0 ? (
         <p className="no-items">

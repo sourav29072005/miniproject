@@ -52,7 +52,7 @@ function Login({ setIsLoggedIn, setIsAdmin }) {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2 className="auth-title">Login</h2>
+        <h1 className="auth-title">Login</h1>
 
         <form onSubmit={handleLogin} className="auth-form">
           <input

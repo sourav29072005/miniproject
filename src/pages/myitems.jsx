@@ -62,7 +62,7 @@ function MyItems() {
   return (
     <div className="myitems-container">
 
-      <h2 className="page-title">My Items</h2>
+      
 
       {/* EDIT FORM */}
       {editingItem && (
