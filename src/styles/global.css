@@ -1,0 +1,20 @@
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background-color: #f5f7fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ff6b00;   /* deep dark gray */
+  margin-bottom: 30px;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+}

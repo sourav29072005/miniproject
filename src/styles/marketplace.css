@@ -1,0 +1,251 @@
+.marketplace-container {
+  position: relative;
+}
+
+/* Search row */
+.search-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+  align-items: center;
+}
+
+.search-container input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+/* Filter Button */
+.filter-btn {
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  background-color: white;
+  transition: 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-btn:hover {
+  background-color: #fff3e6;
+  color: #ff6b00;
+}
+
+/* Wishlist icon (top, beside filter) */
+.wishlist-icon-btn {
+  position: relative;
+  border: 1px solid #ddd;
+  background: white;
+  padding: 12px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wishlist-icon-btn:hover {
+  background-color: #fff3e6;
+  color: #ff6b00;
+  transform: translateY(-1px);
+}
+
+/* Highlight when wishlist mode ON */
+.wishlist-icon-btn.active {
+  border-color: #ff6b00;
+  color: #ff6b00;
+  background: #fff3e6;
+}
+
+.wishlist-badge {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  background: #ff6b00;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* Filter popup */
+.filter-popup {
+  position: absolute;
+  right: 0;
+  top: 95px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  width: 260px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-popup select,
+.filter-popup input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.clear-filter-btn {
+  margin-top: 10px;
+  background: #ff6b00;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.clear-filter-btn:hover {
+  background: #e55d00;
+}
+
+/* Wishlist hint text */
+.wishlist-hint {
+  margin: 10px 0 0;
+  color: #666;
+  text-align: center;
+}
+
+.wishlist-clearview {
+  border: none;
+  background: transparent;
+  color: #ff6b00;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* Grid */
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 25px;
+}
+
+/* Card */
+.item-card {
+  background-color: white;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative; /* needed for wish button */
+}
+
+.item-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
+}
+
+.item-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.description {
+  font-size: 14px;
+  color: #555;
+}
+
+.price {
+  font-weight: 700;
+  color: #0b2a90;
+  margin: 8px 0;
+}
+
+.seller {
+  font-size: 12px;
+  color: gray;
+}
+
+.no-items {
+  margin-top: 20px;
+  color: gray;
+}
+
+/* View button (your marketplace uses buy-btn) */
+.buy-btn {
+  margin-top: auto;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #0b4db7;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+
+.buy-btn:hover {
+  background-color: #0b2a90;
+}
+
+/* Card wishlist heart button */
+.wish-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: rgba(255, 255, 255, 0.92);
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: 0.2s ease;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.wish-btn:hover {
+  transform: scale(1.06);
+}
+
+.wish-btn.active {
+  background: #ffefe3;
+}
+
+/* Keep other styles if used elsewhere */
+.contact-btn {
+  margin-top: 8px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  margin-top: 10px;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  background-color: #ff6b00;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.delete-btn:hover {
+  background-color: #e55d00;
+}

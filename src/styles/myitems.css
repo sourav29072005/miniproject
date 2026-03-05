@@ -1,0 +1,206 @@
+.myitems-container {
+  width: 100%;
+}
+
+/* ================= EDIT SECTION ================= */
+
+.edit-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.edit-card input,
+.edit-card select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.edit-card input:focus,
+.edit-card select:focus {
+  outline: none;
+  border-color: #ff6b00;
+}
+
+.edit-preview {
+  width: 120px;
+  border-radius: 10px;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.update-btn,
+.cancel-btn {
+  flex: 1; /* equal size */
+  padding: 8px 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.update-btn {
+  background-color: #2196f3;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: gray;
+  color: white;
+}
+
+/* ================= ITEM CARDS ================= */
+
+.item-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;   /* This aligns them vertically */
+}
+
+.edit-btn,
+.delete-btn {
+  width: 100%;            
+  height: 42px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 0;
+}
+
+.edit-btn,
+.delete-btn {
+  margin: 0;   /* remove unwanted spacing */
+}
+
+.edit-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+.no-items {
+  margin-top: 20px;
+  color: gray;
+}
+
+.item-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;   /* smooth animation */
+}
+
+/* Hover Effect */
+.item-card:hover {
+  transform: translateY(-6px); /* lift up */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* stronger shadow */
+}
+
+/* Overlay */
+.delete-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal Box */
+.delete-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 14px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: popup 0.25s ease-in-out;
+}
+
+/* Buttons */
+.delete-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.confirm-delete {
+  background-color: #e53935;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cancel-delete {
+  background-color: gray;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Animation */
+@keyframes popup {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/* Update Confirmation Button */
+.confirm-update {
+  background-color: #4CAF50;   /* Green */
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.confirm-update:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.remove-btn {
+  padding: 6px 12px;
+  background-color: #dc3545;
+  color: #ffffff;
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  background-color: #c82333;
+  border-color: #c82333;
+}
