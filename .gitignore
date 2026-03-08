@@ -3,6 +3,10 @@ node_modules/
 backend/node_modules/
 miniproject/node_modules/
 
+# Uploaded images
+backend/uploads/
+
+
 # Environment variables
 .env
 .env.local
