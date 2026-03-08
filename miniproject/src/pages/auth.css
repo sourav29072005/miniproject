@@ -1,0 +1,148 @@
+.auth-container {
+  height: 100vh;
+  background-color: #f5f7fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-card {
+  background-color: #ffffff;
+  padding: 40px;
+  width: 380px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.auth-title {
+  margin-bottom: 25px;
+  font-weight: 600;
+  font-size: 24px;
+}
+
+/* FORM */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* INPUT BOX FIX */
+.auth-form input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background-color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border: 1px solid #0b2a90;
+  box-shadow: 0 0 0 2px rgba(11, 42, 144, 0.2);
+}
+
+/* BUTTON */
+.login-btn {
+  background-color: #0b4db7;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background-color: #0b2a90;
+}
+
+/* ✅ Force login button style */
+.auth-container .login-btn {
+  width: 100%;
+  background-color: #0b4db7 !important;
+  color: #fff !important;
+  padding: 12px 14px;
+  border: none !important;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.auth-container .login-btn:hover {
+  background-color: #0b2a90 !important;
+}
+
+.auth-footer {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.auth-footer .link {
+  color: #0b4db7;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.auth-footer .link:hover {
+  text-decoration: underline;
+}
+
+/* Messages */
+.error-message {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.success-message {
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+/* Select */
+.auth-select {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background-color: #fff;
+  width: 100%;
+  cursor: pointer;
+}
+
+.auth-select:focus {
+  outline: none;
+  border: 1px solid #0b2a90;
+}
+
+.profile-upload-section {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-upload-section label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+}
+
+.profile-upload-section input {
+  padding: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}

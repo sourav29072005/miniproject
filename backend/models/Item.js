@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+
 const itemSchema = new mongoose.Schema(
   {
     title: {
@@ -15,13 +16,18 @@ const itemSchema = new mongoose.Schema(
       required: true
     },
     image: String,
+    images: [String],
 
     approved: {
       type: Boolean,
       default: false
     },
 
-    // 🔥 ADD THIS FIELD
+    category: {
+      type: String,
+      required: true
+    },
+
     status: {
       type: String,
       enum: ["available", "sold"],
@@ -31,9 +37,20 @@ const itemSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
+    },
+
+    rejectionReason: {
+      type: String,
+      default: null
+    },
+
+    rejectedAt: {
+      type: Date,
+      default: null
     }
   },
   { timestamps: true }
 );
+
 
 module.exports = mongoose.model("Item", itemSchema);

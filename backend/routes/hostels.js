@@ -6,9 +6,9 @@ const auth = require("../middleware/auth");
 
 /* ---------------- ADD HOSTEL ---------------- */
 
-router.post("/",auth,async(req,res)=>{
+router.post("/", auth, async (req, res) => {
 
-  try{
+  try {
 
     const hostel = new Hostel(req.body);
 
@@ -16,9 +16,9 @@ router.post("/",auth,async(req,res)=>{
 
     res.status(201).json(hostel);
 
-  }catch(err){
+  } catch (err) {
 
-    res.status(500).json({error:"Failed to add hostel"});
+    res.status(500).json({ error: "Failed to add hostel" });
 
   }
 
@@ -27,42 +27,55 @@ router.post("/",auth,async(req,res)=>{
 
 /* ---------------- GET HOSTELS ---------------- */
 
-router.get("/",async(req,res)=>{
+router.get("/", async (req, res) => {
 
-  try{
+  try {
 
-    const hostels = await Hostel.find().sort({createdAt:-1});
+    const hostels = await Hostel.find().sort({ createdAt: -1 });
 
     res.json(hostels);
 
-  }catch(err){
+  } catch (err) {
 
-    res.status(500).json({error:"Server error"});
+    res.status(500).json({ error: "Server error" });
 
   }
 
 });
 
 
+/* ---------------- GET SINGLE HOSTEL ---------------- */
+
+router.get("/:id", async (req, res) => {
+  try {
+    const hostel = await Hostel.findById(req.params.id);
+    if (!hostel) return res.status(404).json({ error: "Hostel not found" });
+    res.json(hostel);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
 /* ---------------- UPDATE HOSTEL ---------------- */
 
-router.put("/:id",auth,async(req,res)=>{
+router.put("/:id", auth, async (req, res) => {
 
-  try{
+  try {
 
     const updated = await Hostel.findByIdAndUpdate(
 
       req.params.id,
       req.body,
-      {new:true}
+      { new: true }
 
     );
 
     res.json(updated);
 
-  }catch(err){
+  } catch (err) {
 
-    res.status(500).json({error:"Update failed"});
+    res.status(500).json({ error: "Update failed" });
 
   }
 
@@ -71,17 +84,17 @@ router.put("/:id",auth,async(req,res)=>{
 
 /* ---------------- DELETE HOSTEL ---------------- */
 
-router.delete("/:id",auth,async(req,res)=>{
+router.delete("/:id", auth, async (req, res) => {
 
-  try{
+  try {
 
     await Hostel.findByIdAndDelete(req.params.id);
 
-    res.json({message:"Hostel deleted"});
+    res.json({ message: "Hostel deleted" });
 
-  }catch(err){
+  } catch (err) {
 
-    res.status(500).json({error:"Delete failed"});
+    res.status(500).json({ error: "Delete failed" });
 
   }
 
