@@ -1,0 +1,64 @@
+/* Seller Profile Specific Styles */
+@import "./profile.css";
+
+.stat-badge-seller {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    border-radius: 20px;
+}
+
+.stat-badge-seller.dept {
+    background: #fff7ed;
+    border-color: #ffedd5;
+}
+
+.stat-badge-seller .count {
+    color: #0b4db7;
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.stat-badge-seller .label {
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-badge-seller.dept .label {
+    color: #c2410c;
+}
+
+.seller-items-section {
+    animation: fadeIn 0.6s ease-out 0.2s both;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.seller-item-card:hover {
+    border-color: #0b4db766;
+}
+
+.loading-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #64748b;
+}
