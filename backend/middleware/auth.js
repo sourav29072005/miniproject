@@ -12,11 +12,15 @@ module.exports = (req, res, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Auth Middleware - Decoded Token:", decoded);
 
-    const decoded = jwt.verify(token, "cevconnectsecret");
-
-    req.user = decoded.id;
+    req.user = {
+      id: decoded.id,
+      role: decoded.role
+    };
     req.userRole = decoded.role;
+    console.log("Auth Middleware - Setting req.user:", req.user);
 
     next();
 

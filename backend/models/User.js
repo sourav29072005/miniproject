@@ -6,6 +6,10 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: true
   },
+  name: {
+    type: String,
+    required: true
+  },
   password: {
     type: String,
     required: true
@@ -13,6 +17,18 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     default: "user"
+  },
+  profilePic: {
+    type: String,
+    default: null
+  },
+  department: {
+    type: String,
+    default: null
+  },
+  bio: {
+    type: String,
+    default: null
   }
 }, { timestamps: true });
 

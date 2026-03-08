@@ -25,6 +25,7 @@ app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/items", require("./routes/itemRoutes"));
 app.use("/api/hostels", require("./routes/hostels"));
 app.use("/api/orders", require("./routes/orderRoutes"));
+app.use("/api/notifications", require("./routes/notificationRoutes"));
 
 /* -------- TEST ROUTE -------- */
 
