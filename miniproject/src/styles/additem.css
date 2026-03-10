@@ -36,7 +36,8 @@
 .additem-form input:focus,
 .additem-form textarea:focus {
   outline: none;
-  border-color: #ff6b00;
+  border-color: #0b4db7;
+  box-shadow: 0 0 0 3px rgba(11, 77, 183, 0.1);
 }
 
 .image-preview img {
@@ -49,15 +50,17 @@
   padding: 12px;
   border: none;
   border-radius: 8px;
-  background-color: #ff6b00;
+  background: linear-gradient(135deg, #0b4db7 0%, #0b2a90 100%);
   color: white;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(11, 77, 183, 0.2);
 }
 
 .submit-btn:hover {
-  background-color: #e55d00;
+  box-shadow: 0 6px 20px rgba(11, 77, 183, 0.3);
+  transform: translateY(-2px);
 }
 
 .additem-form select {
@@ -69,7 +72,8 @@
 
 .additem-form select:focus {
   outline: none;
-  border-color: #ff6b00;
+  border-color: #0b4db7;
+  box-shadow: 0 0 0 3px rgba(11, 77, 183, 0.1);
 }
 
 .success-message {

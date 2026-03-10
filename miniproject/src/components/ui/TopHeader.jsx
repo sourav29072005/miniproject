@@ -1,4 +1,4 @@
-import { Bell, Check, ExternalLink } from "lucide-react";
+import { Bell, Check, ExternalLink, Menu, X } from "lucide-react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import ProfileDrawer from "./ProfileDrawer";
 import { useState, useEffect, useRef } from "react";
@@ -14,7 +14,7 @@ const routeTitles = {
   "/notifications": "Notifications",
 };
 
-const TopHeader = () => {
+const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -80,19 +80,44 @@ const TopHeader = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-8 bg-header text-white px-6 py-4 rounded-xl2 shadow-card relative">
-        <h1 className="text-2xl font-semibold">{title}</h1>
+      <div className="flex items-center justify-between mb-8 bg-gradient-primary text-white px-8 py-5 rounded-2xl shadow-lg relative overflow-visible z-10">
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
+          <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
+        </div>
 
-        <div className="flex items-center gap-6">
+        {/* Content */}
+        <div className="relative z-10 flex items-center gap-4">
+          {/* Hamburger Menu - Mobile Only */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="md:hidden p-2 hover:bg-white/20 rounded-lg transition-colors"
+            aria-label="Toggle sidebar"
+          >
+            {sidebarOpen ? (
+              <X className="w-5 h-5 text-white" />
+            ) : (
+              <Menu className="w-5 h-5 text-white" />
+            )}
+          </button>
+          
+          <div>
+            <p className="text-sm text-blue-100 mb-1">Current Page</p>
+            <h1 className="text-3xl font-bold">{title}</h1>
+          </div>
+        </div>
+
+        <div className="relative z-20 flex items-center gap-6">
           {/* Notification */}
           <div className="relative" ref={notificationRef}>
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 rounded-full hover:bg-white/10 transition"
+              className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"
             >
               <Bell className="w-5 h-5 text-white" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-danger text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-header">
+                <span className="absolute -top-1 -right-1 bg-danger text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-primaryDark animate-pulse">
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
@@ -100,44 +125,44 @@ const TopHeader = () => {
 
             {/* Notification Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 text-secondary animate-in fade-in slide-in-from-top-2 duration-200">
-                <div className="px-4 py-2 border-b border-gray-50 flex justify-between items-center">
-                  <span className="font-bold text-sm">Recent Notifications</span>
+              <div className="absolute right-0 mt-4 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[9999] animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-gray-50 to-white">
+                  <span className="font-bold text-secondary">Notifications</span>
                   {unreadCount > 0 && (
-                    <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">
+                    <span className="text-[10px] bg-primary/10 text-primary px-2.5 py-1 rounded-full font-bold">
                       {unreadCount} New
                     </span>
                   )}
                 </div>
 
-                <div className="max-h-[320px] overflow-y-auto">
+                <div className="max-h-[400px] overflow-y-auto">
                   {notifications.length === 0 ? (
-                    <div className="p-8 text-center text-gray-400 text-sm">
-                      <Bell className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                      <p>No notifications yet</p>
+                    <div className="p-8 text-center text-gray-400">
+                      <Bell className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                      <p className="text-sm font-medium">No notifications yet</p>
                     </div>
                   ) : (
-                    notifications.slice(0, 5).map((notification) => (
+                    notifications.slice(0, 6).map((notification) => (
                       <div
                         key={notification._id}
-                        className={`px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer border-b border-gray-50 last:border-0 ${!notification.isRead ? "bg-primary/5" : ""
+                        className={`px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer border-b border-gray-50 last:border-0 ${!notification.isRead ? "bg-primary/5" : ""
                           }`}
                         onClick={() => handleNotificationClick(notification)}
                       >
-                        <div className="flex justify-between items-start gap-2">
-                          <p className={`text-xs ${!notification.isRead ? "text-secondary font-semibold" : "text-gray-500"}`}>
+                        <div className="flex justify-between items-start gap-3">
+                          <p className={`text-sm leading-relaxed ${!notification.isRead ? "text-secondary font-semibold" : "text-gray-600"}`}>
                             {notification.message}
                           </p>
                           {!notification.isRead && (
                             <button
                               onClick={(e) => handleMarkAsRead(e, notification._id)}
-                              className="p-1 hover:bg-primary/10 rounded-md text-primary transition-colors"
+                              className="p-1 hover:bg-primary/20 rounded-md text-primary transition-colors flex-shrink-0"
                             >
-                              <Check className="w-3 h-3" />
+                              <Check className="w-4 h-4" />
                             </button>
                           )}
                         </div>
-                        <span className="text-[10px] text-gray-400 mt-1 block">
+                        <span className="text-xs text-gray-400 mt-2 block">
                           {new Date(notification.createdAt).toLocaleDateString()}
                         </span>
                       </div>
@@ -148,19 +173,19 @@ const TopHeader = () => {
                 <Link
                   to="/notifications"
                   onClick={() => setShowNotifications(false)}
-                  className="block px-4 py-2 text-center text-primary text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1 border-t border-gray-50"
+                  className="block px-6 py-3 text-center text-primary text-sm font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 border-t border-gray-100"
                 >
                   View All Notifications
-                  <ExternalLink className="w-3 h-3" />
+                  <ExternalLink className="w-3.5 h-3.5" />
                 </Link>
               </div>
             )}
           </div>
 
           {/* Profile Icon */}
-          <div
+          <button
             onClick={() => setDrawerOpen(true)}
-            className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center font-semibold cursor-pointer border-2 border-white/20 hover:border-white/50 transition-all font-outfit overflow-hidden"
+            className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-semibold cursor-pointer border-2 border-white/30 transition-all duration-300 hover:scale-105 overflow-hidden"
           >
             {user?.profilePic ? (
               <img
@@ -169,9 +194,9 @@ const TopHeader = () => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              initials
+              <span className="text-white font-bold">{initials}</span>
             )}
-          </div>
+          </button>
         </div>
       </div>
 

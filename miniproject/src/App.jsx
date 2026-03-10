@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 
+import Landing from "./pages/Landing";
 import Home from "./pages/home";
 import Register from "./pages/register";
 import Login from "./pages/login";
@@ -28,22 +29,19 @@ import SellerProfile from "./pages/SellerProfile";
 import "./styles/global.css";
 
 function App() {
-  const { isLoggedIn, isAdmin, loading, setIsLoggedIn, setIsAdmin } = useAuth();
+  const { isLoggedIn, isAdmin, loading, setIsLoggedIn } = useAuth();
 
   if (loading) return null;
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* PUBLIC ROUTES */}
+        {/* PUBLIC ROUTES - Landing & Auth Pages */}
         {!isLoggedIn && (
           <>
-            <Route
-              path="/login"
-              element={<Login />}
-            />
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/" element={<Navigate to="/login" />} />
           </>
         )}
 
