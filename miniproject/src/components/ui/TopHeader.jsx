@@ -1,6 +1,7 @@
-import { Bell, Check, ExternalLink, Menu, X } from "lucide-react";
+import { Bell, Check, ExternalLink, Menu, X, Mail } from "lucide-react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import ProfileDrawer from "./ProfileDrawer";
+import Messages from "../Messages";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { getNotifications, markNotificationAsRead, BASE_URL } from "../../api";
@@ -23,6 +24,7 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showMessages, setShowMessages] = useState(false);
   const notificationRef = useRef(null);
 
   const fetchNotifications = async () => {
@@ -109,6 +111,14 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
         </div>
 
         <div className="relative z-20 flex items-center gap-6">
+          {/* Message Icon */}
+          <button
+            onClick={() => setShowMessages(!showMessages)}
+            className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"
+          >
+            <Mail className="w-5 h-5 text-white" />
+          </button>
+
           {/* Notification */}
           <div className="relative" ref={notificationRef}>
             <button
@@ -205,6 +215,8 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
         onClose={() => setDrawerOpen(false)}
         onLogout={logout}
       />
+
+      <Messages isOpen={showMessages} onClose={() => setShowMessages(false)} />
     </>
   );
 };

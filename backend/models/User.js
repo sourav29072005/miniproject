@@ -29,6 +29,22 @@ const userSchema = new mongoose.Schema({
   bio: {
     type: String,
     default: null
+  },
+  isBanned: {
+    type: Boolean,
+    default: false
+  },
+  banReason: {
+    type: String,
+    default: null
+  },
+  bannedAt: {
+    type: Date,
+    default: null
+  },
+  graduationYear: {
+    type: String,
+    default: null
   }
 }, { timestamps: true });
 

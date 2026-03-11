@@ -31,9 +31,9 @@ function Admin() {
           <p>Remove or Control Marketplace Listings</p>
         </div>
 
-        <div className="admin-card">
+        <div className="admin-card" onClick={() => navigate("/admin/users")}>
           <h2>Manage Users</h2>
-          <p>Coming Soon...</p>
+          <p>View User Profiles and Products</p>
         </div>
       </div>
     </div>

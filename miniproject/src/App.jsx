@@ -19,6 +19,7 @@ import SetupProfile from "./pages/SetupProfile";
 import Admin from "./pages/admin";
 import AdminHostels from "./pages/AdminHostels";
 import AdminItems from "./pages/AdminItems";
+import AdminUsers from "./pages/AdminUsers";
 import HostelDetails from "./pages/HostelDetails";
 import Profile from "./pages/Profile";
 
@@ -69,6 +70,14 @@ function App() {
               element={
                 <ProtectedRoute requireAdmin>
                   <AdminItems />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <AdminUsers />
                 </ProtectedRoute>
               }
             />

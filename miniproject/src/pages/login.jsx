@@ -37,7 +37,17 @@ function Login() {
         navigate("/");
       }
     } catch (err) {
-      setError(err.response?.data?.error || "Login failed. Please check your credentials.");
+      const errorData = err.response?.data;
+      let errorMessage = "Login failed. Please check your credentials.";
+
+      // Handle banned user
+      if (errorData?.banned) {
+        errorMessage = `Your account has been banned. ${errorData?.banReason ? `Reason: ${errorData.banReason}` : "Contact support for more information."}`;
+      } else {
+        errorMessage = errorData?.error || errorMessage;
+      }
+
+      setError(errorMessage);
     }
   };
 

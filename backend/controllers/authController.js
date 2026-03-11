@@ -53,6 +53,15 @@ exports.loginUser = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ error: "User not found" });
 
+    // Check if user is banned
+    if (user.isBanned) {
+      return res.status(403).json({ 
+        error: "Your account has been banned",
+        banned: true,
+        banReason: user.banReason
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: "Wrong password" });
 
@@ -135,5 +144,131 @@ exports.getPublicProfile = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+// GET ALL USERS (ADMIN)
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    res.json(users);
+  } catch (error) {
+    console.error("getAllUsers error:", error);
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+};
+
+// BAN USER (ADMIN)
+exports.banUser = async (req, res) => {
+  try {
+    const { userId, banReason } = req.body;
+
+    // Verify admin is trying to ban
+    const admin = await User.findById(req.user.id);
+    if (admin.role !== "admin") {
+      return res.status(403).json({ error: "Only admins can ban users" });
+    }
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Prevent banning admin accounts
+    if (user.role === "admin") {
+      return res.status(403).json({ error: "Cannot ban admin accounts" });
+    }
+
+    // Ban the user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        isBanned: true,
+        banReason: banReason || "Banned by admin",
+        bannedAt: new Date(),
+      },
+      { new: true }
+    ).select("-password");
+
+    res.json({
+      message: "User banned successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Ban user error:", error);
+    res.status(500).json({ error: "Failed to ban user" });
+  }
+};
+
+// UNBAN USER (ADMIN)
+exports.unbanUser = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    // Verify admin is trying to unban
+    const admin = await User.findById(req.user.id);
+    if (admin.role !== "admin") {
+      return res.status(403).json({ error: "Only admins can unban users" });
+    }
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Unban the user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        isBanned: false,
+        banReason: null,
+        bannedAt: null,
+      },
+      { new: true }
+    ).select("-password");
+
+    res.json({
+      message: "User unbanned successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Unban user error:", error);
+    res.status(500).json({ error: "Failed to unban user" });
+  }
+};
+
+// DELETE USER (ADMIN)
+exports.deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    // Verify admin is trying to delete
+    const admin = await User.findById(req.user.id);
+    if (admin.role !== "admin") {
+      return res.status(403).json({ error: "Only admins can delete users" });
+    }
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Prevent deleting admin accounts
+    if (user.role === "admin") {
+      return res.status(403).json({ error: "Cannot delete admin accounts" });
+    }
+
+    // Delete the user
+    await User.findByIdAndDelete(userId);
+
+    res.json({
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete user error:", error);
+    res.status(500).json({ error: "Failed to delete user" });
   }
 };
