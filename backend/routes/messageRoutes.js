@@ -7,6 +7,7 @@ const admin = require("../middleware/admin");
 // User routes
 router.get("/", auth, messageController.getUserMessages);
 router.get("/unread-count", auth, messageController.getUnreadCount);
+router.post("/user-send", auth, messageController.sendUserMessage);
 router.put("/:id/read", auth, messageController.markAsRead);
 router.put("/read-all/all", auth, messageController.markAllAsRead);
 router.delete("/:id", auth, messageController.deleteMessage);

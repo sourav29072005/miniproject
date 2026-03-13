@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, ShoppingBag, Plus, Building2, Package, ChevronRight } from "lucide-react";
+import { Home, ShoppingBag, Plus, Building2, Package, ChevronRight, MessageSquare } from "lucide-react";
 
 function Sidebar({ closeSidebar }) {
   const location = useLocation();
@@ -7,6 +7,7 @@ function Sidebar({ closeSidebar }) {
   const navItems = [
     { path: "/", label: "Home", icon: Home },
     { path: "/marketplace", label: "Marketplace", icon: ShoppingBag },
+    { path: "/chat", label: "Messages", icon: MessageSquare },
     { path: "/add-item", label: "Sell Item", icon: Plus },
     { path: "/hostels", label: "Hostels", icon: Building2 },
     { path: "/my-items", label: "My Items", icon: Package },

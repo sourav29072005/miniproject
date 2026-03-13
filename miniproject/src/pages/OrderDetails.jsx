@@ -17,13 +17,21 @@ function OrderDetails() {
       const foundOrder = response.data.find((o) => o._id === id);
 
       if (foundOrder) {
+        
+        const title = foundOrder.itemId ? foundOrder.itemId.title : (foundOrder.itemTitle || "Unknown Item (Deleted)");
+        
+        let image = null;
+        if (foundOrder.itemId && foundOrder.itemId.image) {
+          image = `${BASE_URL}/uploads/${foundOrder.itemId.image}`;
+        } else if (foundOrder.itemImage) {
+          image = `${BASE_URL}/uploads/${foundOrder.itemImage}`;
+        }
+
         setOrder({
           id: foundOrder._id,
           itemId: foundOrder.itemId ? foundOrder.itemId._id : null,
-          title: foundOrder.itemId ? foundOrder.itemId.title : "Unknown Item",
-          image: foundOrder.itemId && foundOrder.itemId.image
-            ? `${BASE_URL}/uploads/${foundOrder.itemId.image}`
-            : null,
+          title: title,
+          image: image,
           price: foundOrder.price,
           seller: foundOrder.sellerId ? (foundOrder.sellerId.name || foundOrder.sellerId.email) : "Seller",
           sellerPic: foundOrder.sellerId?.profilePic,
@@ -42,7 +50,7 @@ function OrderDetails() {
 
   useEffect(() => {
     fetchOrderDetails();
-  }, [id]);
+  }, [id, fetchOrderDetails]);
 
   const markAsReceived = async () => {
     if (!window.confirm("Are you sure you want to mark this item as received?"))

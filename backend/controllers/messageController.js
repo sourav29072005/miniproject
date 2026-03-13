@@ -38,6 +38,42 @@ exports.sendMessage = async (req, res) => {
   }
 };
 
+// 🔹 SEND MESSAGE (USER TO USER)
+exports.sendUserMessage = async (req, res) => {
+  try {
+    const { recipientId, subject, message } = req.body;
+
+    // Verify recipient exists
+    const recipient = await User.findById(recipientId);
+    if (!recipient) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    // Prevent sending message to self
+    if (recipientId === req.user.id) {
+       return res.status(400).json({ error: "Cannot send message to yourself" });
+    }
+
+    const newMessage = await Message.create({
+      sender: req.user.id,
+      recipient: recipientId,
+      subject,
+      message,
+      type: "info",
+    });
+
+    const populatedMessage = await newMessage.populate("sender", "name profilePic");
+
+    res.status(201).json({
+      message: "Message sent successfully",
+      data: populatedMessage,
+    });
+  } catch (error) {
+    console.error("Send user message error:", error);
+    res.status(500).json({ error: "Failed to send message" });
+  }
+};
+
 // 🔹 GET USER MESSAGES
 exports.getUserMessages = async (req, res) => {
   try {

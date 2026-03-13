@@ -16,6 +16,8 @@ import Payment from "./pages/payment";
 import Notifications from "./pages/Notifications";
 import SetupProfile from "./pages/SetupProfile";
 
+import ChatPage from "./pages/ChatPage";
+
 import Admin from "./pages/admin";
 import AdminHostels from "./pages/AdminHostels";
 import AdminItems from "./pages/AdminItems";
@@ -115,6 +117,7 @@ function App() {
             <Route path="payment" element={<Payment />} />
             <Route path="success" element={<Success />} />
             <Route path="notifications" element={<Notifications />} />
+            <Route path="chat" element={<ChatPage />} />
             <Route path="setup-profile" element={<SetupProfile />} />
             <Route path="profile" element={<Profile />} />
             <Route path="seller/:id" element={<SellerProfile />} />

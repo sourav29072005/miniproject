@@ -13,21 +13,31 @@ function MyOrders() {
       const data = response.data;
 
       // Map backend structure to frontend structure needed for rendering
-      const formattedOrders = data.map((order) => ({
-        id: order._id,
-        itemId: order.itemId ? order.itemId._id : null,
-        title: order.itemId ? order.itemId.title : null,
-        image: order.itemId && order.itemId.image
-          ? `${BASE_URL}/uploads/${order.itemId.image}`
-          : null,
-        price: order.price,
+      const formattedOrders = data.map((order) => {
+        // Fallbacks for deleted items
+        const title = order.itemId ? order.itemId.title : (order.itemTitle || "Unknown Item");
+        
+        let image = null;
+        if (order.itemId && order.itemId.image) {
+          image = `${BASE_URL}/uploads/${order.itemId.image}`;
+        } else if (order.itemImage) {
+          image = `${BASE_URL}/uploads/${order.itemImage}`;
+        }
+
+        return {
+          id: order._id,
+          itemId: order.itemId ? order.itemId._id : null,
+          title: title,
+          image: image,
+          price: order.price,
         seller: order.sellerId ? (order.sellerId.name || order.sellerId.email) : "Unknown",
         sellerPic: order.sellerId?.profilePic,
         status: order.status,
         buyerConfirmed: order.buyerConfirmed,
         sellerConfirmed: order.sellerConfirmed,
         time: new Date(order.createdAt).getTime(),
-      }));
+      };
+      });
       setOrders(formattedOrders);
     } catch (error) {
       console.error("Failed to fetch orders from API:", error);
@@ -100,11 +110,7 @@ function MyOrders() {
 
                   <div>
                     <h3 className="font-semibold text-secondary flex items-center gap-2">
-                      {order.title || (
-                        <span className="text-red-400 italic font-normal text-sm flex items-center gap-1">
-                          ⚠ Item no longer available
-                        </span>
-                      )}
+                       {order.title}
                     </h3>
 
                     <p className="text-sm text-gray-500">Order ID: {order.id}</p>

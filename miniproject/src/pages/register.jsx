@@ -12,7 +12,7 @@ function Register() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
-  const { setIsLoggedIn, setIsAdmin, refreshUser } = useAuth();
+  const { refreshUser } = useAuth();
 
   const handleRegister = async (e) => {
     e.preventDefault();

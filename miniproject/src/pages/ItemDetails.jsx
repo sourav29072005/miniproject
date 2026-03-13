@@ -52,7 +52,15 @@ function ItemDetails() {
   if (loading) return <p className="loading-text">Loading item details...</p>;
   if (!item) return <p className="loading-text">Item not found.</p>;
 
-  const contactSeller = () => alert(`Contact Seller: ${item.seller}`);
+  const contactSeller = async () => {
+    try {
+      const res = await api.post("chat/start", { recipientId: item.sellerId });
+      navigate(`/chat?convo=${res.data._id}`);
+    } catch(err) {
+      console.error("Failed to start chat", err);
+      alert("Failed to connect to seller.");
+    }
+  };
 
   const confirmBuy = () => {
     if (item.status === "sold") { alert("Sorry! This item has just been sold."); navigate("/marketplace"); return; }

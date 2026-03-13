@@ -172,6 +172,21 @@ exports.deleteItem = async (req, res) => {
       return res.status(400).json({ error: "Cannot delete an item with an active order." });
     }
 
+    // BACKFILL SNAPSHOT: If this was an old item that didn't record snapshot data when the order was placed,
+    // grab it right now and stamp it onto the Order history so the buyer's UI doesn't break.
+    const itemToDelete = await Item.findById(req.params.id);
+    if (itemToDelete) {
+      await Order.updateMany(
+         { itemId: req.params.id },
+         { 
+            $set: { 
+              itemTitle: itemToDelete.title,
+              itemImage: itemToDelete.images && itemToDelete.images.length > 0 ? itemToDelete.images[0] : itemToDelete.image
+            } 
+         }
+      );
+    }
+
     await Item.findByIdAndDelete(req.params.id);
     res.json({ message: "Item deleted successfully" });
   } catch (error) {

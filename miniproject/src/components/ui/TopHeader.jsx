@@ -4,7 +4,8 @@ import ProfileDrawer from "./ProfileDrawer";
 import Messages from "../Messages";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { getNotifications, markNotificationAsRead, BASE_URL } from "../../api";
+import api, { getNotifications, markNotificationAsRead, BASE_URL } from "../../api";
+import { io } from "socket.io-client";
 
 const routeTitles = {
   "/": "Home",
@@ -25,23 +26,34 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
+  const [unreadChatCount, setUnreadChatCount] = useState(0);
   const notificationRef = useRef(null);
 
-  const fetchNotifications = async () => {
+  const fetchData = async () => {
     try {
-      const response = await getNotifications();
-      setNotifications(response.data);
+      // Fetch both notifications and chat counts in parallel
+      const [notifRes, chatRes] = await Promise.all([
+        getNotifications().catch(e => ({data: []})),
+        api.get("chat/unread-count").catch(e => ({data: {unreadCount: 0}}))
+      ]);
+      setNotifications(notifRes.data);
+      setUnreadChatCount(chatRes.data.unreadCount || 0);
     } catch (error) {
-      console.error("Failed to fetch notifications:", error);
+      console.error("Failed to fetch header data:", error);
     }
   };
 
   useEffect(() => {
-    fetchNotifications();
+    fetchData();
+    const interval = setInterval(fetchData, 60000); // Poll every minute
 
-    const interval = setInterval(fetchNotifications, 60000); // Poll every minute
+    // Socket listener for new unread chats anywhere in the app
+    const socket = io(BASE_URL.replace("/api", ""));
+    socket.on("new_unread_message", () => {
+       // Refresh just the chat count when a new message event arrives
+       api.get("chat/unread-count").then(res => setUnreadChatCount(res.data.unreadCount || 0)).catch(console.error);
+    });
 
-    // Close dropdown on click outside
     const handleClickOutside = (event) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
         setShowNotifications(false);
@@ -51,6 +63,7 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
 
     return () => {
       clearInterval(interval);
+      socket.disconnect();
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
@@ -113,10 +126,15 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
         <div className="relative z-20 flex items-center gap-6">
           {/* Message Icon */}
           <button
-            onClick={() => setShowMessages(!showMessages)}
+            onClick={() => navigate("/chat")}
             className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"
           >
             <Mail className="w-5 h-5 text-white" />
+            {unreadChatCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-primaryDark animate-pulse">
+                {unreadChatCount > 9 ? "9+" : unreadChatCount}
+              </span>
+            )}
           </button>
 
           {/* Notification */}

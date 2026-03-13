@@ -1,80 +1,388 @@
+* {
+  box-sizing: border-box;
+}
+
+/* Page Container */
 .hostel-container {
-  padding: 30px;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  min-height: 100vh;
 }
 
 .hostel-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* ✅ TWO cards per row */
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
+/* Hostel Card */
 .hostel-card {
   background: white;
   border-radius: 14px;
   overflow: hidden;
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(11, 77, 183, 0.08);
+  border: 1px solid rgba(11, 77, 183, 0.05);
+  display: flex;
+  flex-direction: column;
+  animation: cardSlideIn 0.5s ease-out;
+}
 
-  transition: all 0.25s ease; /* 🔥 smooth animation */
-  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hostel-card:hover {
-  transform: translateY(-6px) scale(1.02);  /* lifts card */
-  box-shadow: 0 12px 22px rgba(0,0,0,0.18); /* deeper shadow */
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px rgba(11, 77, 183, 0.15);
+  border-color: rgba(11, 77, 183, 0.1);
+}
+
+/* Image Container */
+.hostel-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  background: #f0f4f8;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hostel-card img {
   width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  background: white;
+  padding: 8px;
 }
 
-.rent {
-  font-weight: bold;
-  color: #2e7d32;
-}
-
-.facilities span {
-  background: #e0f2f1;
-  margin: 5px;
-  padding: 4px 8px;
-  border-radius: 5px;
-  display: inline-block;
-}
-
-.status-full {
-  color: red;
-  font-weight: bold;
-}
-
-.status-available {
-  color: green;
-  font-weight: bold;
-}
-
-.contact-btn {
-  margin-top: 10px;
-  padding: 8px 15px;
-  background: #1976d2;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.hostel-card:hover img {
+  transform: scale(1.05);
 }
 
 .hostel-thumb {
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 10px;
 }
 
 .placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f2f2f2;
-  color: #666;
+  background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+  color: #94a3b8;
   font-weight: 600;
+  font-size: 15px;
+}
+
+/* Status Badge */
+.hostel-status-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hostel-status-badge.available {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #166534;
+}
+
+.hostel-status-badge.full {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+}
+
+/* Card Content */
+.hostel-card-content {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.hostel-card h3 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  color: #0F172A;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+}
+
+/* Rent Section */
+.rent-section {
+  margin: 12px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.rent {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0b4db7;
+}
+
+.rent-label {
+  font-size: 12px;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Quick Info */
+.quick-info {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.quick-info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.quick-info-item-icon {
+  font-size: 16px;
+}
+
+/* Location */
+.hostel-location {
+  font-size: 14px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0;
+  font-weight: 500;
+}
+
+/* View Details Button */
+.view-details-btn {
+  margin-top: auto;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #0b4db7 0%, #0b2a90 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(11, 77, 183, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.view-details-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(11, 77, 183, 0.3);
+}
+
+.view-details-btn:active {
+  transform: translateY(0);
+}
+
+/* No Items Message */
+.no-items {
+  text-align: center;
+  padding: 60px 20px;
+  color: #0b4db7;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.no-items::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: #0b4db7;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .hostel-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .hostel-card h3 {
+    font-size: 18px;
+  }
+
+  .rent {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hostel-container {
+    padding: 20px 12px;
+  }
+
+  .hostel-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .hostel-image-wrapper {
+    height: 180px;
+  }
+
+  .hostel-card img {
+    padding: 6px;
+  }
+
+  .hostel-card-content {
+    padding: 16px;
+  }
+
+  .hostel-card h3 {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+
+  .rent {
+    font-size: 20px;
+  }
+
+  .quick-info {
+    font-size: 12px;
+    margin: 10px 0;
+  }
+
+  .view-details-btn {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .modal-content {
+    max-width: 95vw;
+    max-height: 80vh;
+    border-radius: 12px;
+  }
+
+  .modal-overlay {
+    padding: 15px;
+  }
+
+  .modal-close-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    top: 15px;
+    right: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hostel-container {
+    padding: 15px 10px;
+  }
+
+  .hostel-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .hostel-image-wrapper {
+    height: 160px;
+  }
+
+  .hostel-card img {
+    padding: 4px;
+  }
+
+  .hostel-card-content {
+    padding: 14px;
+  }
+
+  .hostel-card h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .rent {
+    font-size: 20px;
+  }
+
+  .rent-label {
+    font-size: 11px;
+  }
+
+  .quick-info {
+    gap: 10px;
+    margin: 8px 0;
+    font-size: 12px;
+  }
+
+  .view-details-btn {
+    padding: 9px 12px;
+    font-size: 12px;
+    margin-top: 12px;
+  }
+
+  .modal-image-gallery {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .modal-thumb {
+    width: 60px;
+    height: 60px;
+  }
+
+  .modal-close-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    top: 12px;
+    right: 12px;
+  }
 }

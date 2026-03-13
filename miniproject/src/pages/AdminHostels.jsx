@@ -29,6 +29,7 @@ function AdminHostels() {
   const [contact, setContact] = useState("");
   const [roomType, setRoomType] = useState("");
   const [capacity, setCapacity] = useState("");
+  const [availableRooms, setAvailableRooms] = useState("");
   const [facilities, setFacilities] = useState([]);
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("available");
@@ -70,6 +71,7 @@ function AdminHostels() {
     setContact("");
     setRoomType("");
     setCapacity("");
+    setAvailableRooms("");
     setFacilities([]);
     setDescription("");
     setStatus("available");
@@ -128,6 +130,7 @@ function AdminHostels() {
     setContact(hostel.contact || "");
     setRoomType(hostel.roomType || "");
     setCapacity(hostel.capacity || "");
+    setAvailableRooms(hostel.availableRooms || "");
     setFacilities(hostel.facilities || []);
     setDescription(hostel.description || "");
     setStatus(hostel.status || "available");
@@ -171,6 +174,7 @@ function AdminHostels() {
       contact: contact.trim(),
       roomType: roomType.trim(),
       capacity: capacity.trim(),
+      availableRooms: availableRooms.trim(),
       facilities,
       description: description.trim(),
       images,
@@ -264,6 +268,15 @@ function AdminHostels() {
                 value={capacity}
                 onChange={(e) => setCapacity(e.target.value)}
                 placeholder="e.g., 4 per room"
+              />
+            </div>
+
+            <div className="ah-field">
+              <label>Available Rooms</label>
+              <input
+                value={availableRooms}
+                onChange={(e) => setAvailableRooms(e.target.value)}
+                placeholder="e.g., 2 rooms (4 beds)"
               />
             </div>
 

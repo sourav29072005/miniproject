@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api, { BASE_URL } from "../api";
-import { ArrowLeft, BookOpen, User as UserIcon, Package } from "lucide-react";
+import { ArrowLeft, User as UserIcon, Package, MessageCircle } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 import "./sellerprofile.css";
 
 function SellerProfile() {
@@ -10,6 +11,10 @@ function SellerProfile() {
     const [seller, setSeller] = useState(null);
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
+    
+    // Safety check - if this is the currently logged in user, don't show the contact button
+    const isCurrentUser = user && user.id === id;
 
     useEffect(() => {
         const fetchSellerData = async () => {
@@ -33,6 +38,16 @@ function SellerProfile() {
     const viewItem = (itemId) => {
         localStorage.setItem("selectedItemId", itemId);
         navigate("/item-details");
+    };
+
+    const handleContactSeller = async () => {
+        try {
+            const res = await api.post("chat/start", { recipientId: seller._id });
+            navigate(`/chat?convo=${res.data._id}`);
+        } catch (err) {
+            console.error("Failed to start chat", err);
+            alert("Failed to connect to seller.");
+        }
     };
 
     if (loading) return (
@@ -80,11 +95,21 @@ function SellerProfile() {
                     </div>
                 </div>
 
-                <div className="profile-main-info text-center">
+                <div className="profile-main-info text-center flex flex-col items-center">
                     <h1 className="user-full-name text-2xl font-bold">{seller.name}</h1>
-                    <p className="user-email-text text-gray-500">{seller.email}</p>
+                    <p className="user-email-text text-gray-500 mb-4">{seller.email}</p>
 
-                    <div className="flex justify-center gap-3 mt-4">
+                    {!isCurrentUser && (
+                        <button
+                            onClick={handleContactSeller}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium flex items-center gap-2 shadow-sm transition-all hover:shadow-md active:scale-95"
+                        >
+                            <MessageCircle size={18} />
+                            Contact Seller
+                        </button>
+                    )}
+
+                    <div className="flex justify-center gap-3 mt-6">
                         <div className="stat-badge-seller">
                             <span className="count">{items.length}</span>
                             <span className="label">Items</span>

@@ -28,7 +28,7 @@ function DashboardLayout({ setIsLoggedIn }) {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-8 overflow-y-auto relative z-0 flex flex-col">
+      <main className="flex-1 p-6 md:p-8 md:pt-6 overflow-y-auto relative z-0 flex flex-col">
         <TopHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         <Outlet />
       </main>
