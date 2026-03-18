@@ -34,6 +34,8 @@ exports.createOrder = async (req, res) => {
             sellerId,
             price: price || item.price,
             status: "Pending",
+            itemTitle: item.title,
+            itemImage: item.images && item.images.length > 0 ? item.images[0] : item.image,
         });
 
         // Mark item as sold

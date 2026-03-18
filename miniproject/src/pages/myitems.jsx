@@ -19,7 +19,10 @@ function MyItems() {
       const itemsData = itemsResponse.data;
       const salesData = salesResponse.data;
 
-      const formattedItems = itemsData.map((item) => {
+      const formattedItems = [];
+      
+      // Process active listings
+      itemsData.forEach((item) => {
         const activeOrder = salesData.find(
           (o) =>
             o.itemId &&
@@ -28,7 +31,7 @@ function MyItems() {
             o.status !== "Delivered"
         );
 
-        return {
+        formattedItems.push({
           id: item._id,
           title: item.title,
           description: item.description,
@@ -43,6 +46,7 @@ function MyItems() {
               ? `${BASE_URL}/uploads/${item.image}`
               : null,
           status: item.status,
+          isDeleted: false,
           activeOrder: activeOrder
             ? {
               id: activeOrder._id,
@@ -55,7 +59,46 @@ function MyItems() {
               createdAt: activeOrder.createdAt,
             }
             : null,
-        };
+        });
+      });
+
+      // Process "ghost" orders (orders where the item has been deleted)
+      salesData.forEach((order) => {
+         // If this order doesn't have an associated item, or its item isn't in itemsData
+         const itemStillExists = order.itemId && itemsData.some(i => i._id === order.itemId._id);
+         if (!itemStillExists && order.status !== "Cancelled") {
+           // Create a ghost card for the deleted item's order
+           let image = null;
+           if (order.itemId && order.itemId.image) {
+             image = `${BASE_URL}/uploads/${order.itemId.image}`;
+           } else if (order.itemImage) {
+             image = `${BASE_URL}/uploads/${order.itemImage}`;
+           }
+
+           formattedItems.push({
+             id: `ghost-${order._id}`,
+             title: (order.itemId && order.itemId.title) ? order.itemId.title : (order.itemTitle || "Unknown Item (Deleted)"),
+             description: "You have deleted this item from your listings, but its order history remains.",
+             price: order.price,
+             category: "Unknown",
+             approved: true,
+             rejectionReason: null,
+             rejectedAt: null,
+             image: image,
+             status: order.status === "Delivered" ? "delivered" : "sold",
+             isDeleted: true,
+             activeOrder: {
+               id: order._id,
+               buyerConfirmed: order.buyerConfirmed,
+               sellerConfirmed: order.sellerConfirmed,
+               status: order.status,
+               buyer: order.buyerId
+                 ? order.buyerId.name || order.buyerId.email
+                 : "Unknown",
+               createdAt: order.createdAt,
+             }
+           });
+         }
       });
 
       setMyItems(formattedItems);
@@ -118,12 +161,18 @@ function MyItems() {
 
   const getStatusBadges = (item) => {
     const badges = [];
-    if (item.status === "sold") badges.push({ cls: "badge-sold", label: "Sold" });
-    else if (item.status === "delivered") badges.push({ cls: "badge-sold", label: "Delivered" });
-    else badges.push({ cls: "badge-available", label: "Available" });
-
-    if (!item.approved && item.rejectionReason) badges.push({ cls: "badge-rejected", label: "Rejected ❌" });
-    else if (!item.approved) badges.push({ cls: "badge-unapproved", label: "Pending Approval" });
+    
+    if (!item.approved && item.rejectionReason) {
+      badges.push({ cls: "badge-rejected", label: "Rejected" });
+    } else if (!item.approved) {
+      badges.push({ cls: "badge-unapproved", label: "Pending Approval" });
+    } else if (item.status === "sold") {
+      badges.push({ cls: "badge-sold", label: "Sold" });
+    } else if (item.status === "delivered") {
+      badges.push({ cls: "badge-sold", label: "Delivered" });
+    } else {
+      badges.push({ cls: "badge-available", label: "Available" });
+    }
 
     return badges;
   };
@@ -229,7 +278,7 @@ function MyItems() {
             const badges = getStatusBadges(item);
 
             return (
-              <div key={item.id} className="item-card">
+              <div key={item.id} className={`item-card ${item.rejectionReason ? 'rejected-item' : ''}`}>
                 {/* IMAGE */}
                 <div className="image-wrapper">
                   {item.image ? (
@@ -247,13 +296,18 @@ function MyItems() {
                   </div>
                 </div>
 
-                {/* BODY */}
                 <div className="item-card-body">
                   <p className="item-card-title">{item.title}</p>
                   <p className="item-card-price">₹ {item.price}</p>
                   <p className="item-card-desc">{item.description}</p>
 
-                  {statusText && (
+                  {item.rejectionReason && (
+                    <div className="rejection-alert">
+                      <strong>⚠️ Rejected:</strong> {item.rejectionReason}
+                    </div>
+                  )}
+
+                  {!item.rejectionReason && statusText && (
                     <div className="item-card-status-row">
                       <span className="order-info-text">{statusText}</span>
                     </div>

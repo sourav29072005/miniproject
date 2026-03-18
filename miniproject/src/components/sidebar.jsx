@@ -1,44 +1,86 @@
 import { Link, useLocation } from "react-router-dom";
+import { Home, ShoppingBag, Plus, Building2, Package, ChevronRight, MessageSquare } from "lucide-react";
 
-function Sidebar() {
+function Sidebar({ closeSidebar }) {
   const location = useLocation();
 
+  const navItems = [
+    { path: "/", label: "Home", icon: Home },
+    { path: "/marketplace", label: "Marketplace", icon: ShoppingBag },
+    { path: "/chat", label: "Messages", icon: MessageSquare },
+    { path: "/add-item", label: "Sell Item", icon: Plus },
+    { path: "/hostels", label: "Hostels", icon: Building2 },
+    { path: "/my-items", label: "My Items", icon: Package },
+  ];
+
   const linkClasses = (path) =>
-    `block px-4 py-2 rounded-lg transition ${location.pathname === path
-      ? "bg-primary text-white"
-      : "text-secondary hover:bg-gray-100"
+    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group ${
+      location.pathname === path
+        ? "bg-gradient-primary text-white shadow-md hover:bg-primaryDark hover:shadow-lg"
+        : "text-secondary hover:bg-gray-50 text-gray-700"
     }`;
 
+  const handleNavClick = () => {
+    // Close sidebar on mobile when a link is clicked
+    if (closeSidebar && window.innerWidth < 768) {
+      closeSidebar();
+    }
+  };
+
   return (
-    <div className="w-64 bg-white shadow-card flex flex-col p-6">
+    <div className="w-64 bg-white shadow-card flex flex-col p-6 h-screen sticky top-0">
       {/* Logo */}
-      <Link to="/" className="flex items-center gap-2 mb-8">
-        <div className="w-8 h-8 bg-primary rounded-md"></div>
-        <span className="text-xl font-bold text-primary">CEV CONNECT</span>
+      <Link 
+        to="/" 
+        onClick={handleNavClick}
+        className="flex items-center gap-3 mb-10 group hover:opacity-80 transition-opacity"
+      >
+        <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center text-white font-bold text-lg group-hover:shadow-lg transition-shadow">
+          C
+        </div>
+        <div className="flex flex-col">
+          <span className="text-lg font-bold text-primary leading-tight">CEV</span>
+          <span className="text-xs text-muted">CONNECT</span>
+        </div>
       </Link>
 
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mb-6" />
+
       {/* Navigation */}
-      <nav className="space-y-2">
-        <Link to="/" className={linkClasses("/")}>
-          Home
-        </Link>
-
-        <Link to="/marketplace" className={linkClasses("/marketplace")}>
-          Marketplace
-        </Link>
-
-        <Link to="/add-item" className={linkClasses("/add-item")}>
-          Sell Item
-        </Link>
-
-        <Link to="/hostels" className={linkClasses("/hostels")}>
-          Hostels
-        </Link>
-
-        <Link to="/my-items" className={linkClasses("/my-items")}>
-          My Items
-        </Link>
+      <nav className="space-y-1 flex-1">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = location.pathname === item.path;
+          
+          return (
+            <Link 
+              key={item.path}
+              to={item.path}
+              onClick={handleNavClick}
+              className={linkClasses(item.path)}
+            >
+              <Icon className={`w-5 h-5 transition-transform ${
+                isActive ? "text-white" : "group-hover:scale-110"
+              }`} />
+              <span className="font-medium text-sm">{item.label}</span>
+              {isActive && (
+                <ChevronRight className="w-4 h-4 ml-auto text-white" />
+              )}
+            </Link>
+          );
+        })}
       </nav>
+
+      {/* Footer Info */}
+      <div className="pt-6 border-t border-gray-100">
+        <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 text-center">
+          <p className="text-xs text-muted mb-2">Need Help?</p>
+          <button className="text-primary font-semibold text-sm hover:text-primaryDark transition-colors">
+            Contact Support
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

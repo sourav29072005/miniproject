@@ -39,6 +39,7 @@ function Hostel() {
         <div className="hostel-grid">
           {hostels.map((hostel) => {
             const thumbnail = hostel.images?.[0] || "";
+            const isAvailable = hostel.status !== "full";
 
             return (
               <div
@@ -51,24 +52,83 @@ function Hostel() {
                   if (e.key === "Enter") viewHostel(hostel);
                 }}
               >
-                {thumbnail ? (
-                  <img
-                    src={thumbnail}
-                    alt={hostel.name}
-                    className="hostel-thumb"
-                  />
-                ) : (
-                  <div className="hostel-thumb placeholder">No Image</div>
-                )}
+                {/* Image Section */}
+                <div className="hostel-image-wrapper">
+                  {/* Status Badge */}
+                  <div
+                    className={`hostel-status-badge ${
+                      isAvailable ? "available" : "full"
+                    }`}
+                  >
+                    <span>
+                      {isAvailable ? "📍 Available" : "❌ Full"}
+                    </span>
+                  </div>
 
-                <h3>{hostel.name}</h3>
+                  {/* Main Image */}
+                  {thumbnail ? (
+                    <img
+                      src={thumbnail}
+                      alt={hostel.name}
+                      className="hostel-thumb"
+                    />
+                  ) : (
+                    <div className="hostel-thumb placeholder">
+                      📷 No Image Available
+                    </div>
+                  )}
+                </div>
 
-                <p className="rent">₹ {hostel.rent} / month</p>
+                {/* Card Content */}
+                <div className="hostel-card-content">
+                  {/* Name */}
+                  <h3>{hostel.name}</h3>
+
+                  {/* Location */}
+                  <div className="hostel-location">
+                    📍 {hostel.location || "Location not specified"}
+                  </div>
+
+                  {/* Rent Section */}
+                  <div className="rent-section">
+                    <span className="rent">₹{hostel.rent || "N/A"}</span>
+                    <span className="rent-label">/ month</span>
+                  </div>
+
+                  {/* Quick Info */}
+                  <div className="quick-info">
+                    {hostel.roomType && (
+                      <div className="quick-info-item">
+                        <span className="quick-info-item-icon">🛏️</span>
+                        <span>{hostel.roomType}</span>
+                      </div>
+                    )}
+                    {hostel.capacity && (
+                      <div className="quick-info-item">
+                        <span className="quick-info-item-icon">👥</span>
+                        <span>{hostel.capacity} capacity</span>
+                      </div>
+                    )}
+                    {hostel.availableRooms && (
+                      <div className="quick-info-item">
+                        <span className="quick-info-item-icon">🔑</span>
+                        <span>{hostel.availableRooms} available</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* View Details Button */}
+                  <button className="view-details-btn">
+                    View Details
+                  </button>
+                </div>
               </div>
             );
           })}
         </div>
       )}
+
+
     </div>
   );
 }

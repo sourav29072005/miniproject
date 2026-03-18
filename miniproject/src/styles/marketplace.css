@@ -32,8 +32,8 @@
 }
 
 .filter-btn:hover {
-  background-color: #fff3e6;
-  color: #ff6b00;
+  background-color: #e6f0ff;
+  color: #0b4db7;
 }
 
 /* Wishlist icon (top, beside filter) */
@@ -51,23 +51,23 @@
 }
 
 .wishlist-icon-btn:hover {
-  background-color: #fff3e6;
-  color: #ff6b00;
+  background-color: #e6f0ff;
+  color: #0b4db7;
   transform: translateY(-1px);
 }
 
 /* Highlight when wishlist mode ON */
 .wishlist-icon-btn.active {
-  border-color: #ff6b00;
-  color: #ff6b00;
-  background: #fff3e6;
+  border-color: #0b4db7;
+  color: #0b4db7;
+  background: #e6f0ff;
 }
 
 .wishlist-badge {
   position: absolute;
   top: -7px;
   right: -7px;
-  background: #ff6b00;
+  background: #0b4db7;
   color: white;
   font-size: 11px;
   padding: 2px 6px;
@@ -101,17 +101,20 @@
 
 .clear-filter-btn {
   margin-top: 10px;
-  background: #ff6b00;
+  background: #0b4db7;
   color: white;
   border: none;
   padding: 10px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 700;
+  transition: all 0.2s ease;
 }
 
 .clear-filter-btn:hover {
-  background: #e55d00;
+  background: #0b2a90;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(11, 77, 183, 0.25);
 }
 
 /* Wishlist hint text */
@@ -124,9 +127,15 @@
 .wishlist-clearview {
   border: none;
   background: transparent;
-  color: #ff6b00;
+  color: #0b4db7;
   font-weight: 800;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wishlist-clearview:hover {
+  color: #0b2a90;
+  text-decoration: underline;
 }
 
 /* Grid */
@@ -140,13 +149,14 @@
 .item-card {
   background-color: white;
   border-radius: 16px;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   position: relative;
   border: 1px solid rgba(0, 0, 0, 0.04);
+  z-index: 1;
 }
 
 .item-card:hover {
@@ -158,6 +168,7 @@
   width: 100%;
   height: 180px;
   overflow: hidden;
+  border-radius: 12px;
 }
 
 .item-image-container img {
@@ -266,26 +277,30 @@
 /* Card wishlist heart button */
 .wish-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+  right: 12px;
   border: none;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.95);
   width: 38px;
   height: 38px;
   border-radius: 999px;
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: all 0.2s ease;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+  backdrop-filter: blur(4px);
 }
 
 .wish-btn:hover {
   transform: scale(1.06);
+  color: #0b4db7;
 }
 
 .wish-btn.active {
-  background: #ffefe3;
+  background: #e6f0ff;
+  color: #0b4db7;
 }
 
 /* Keep other styles if used elsewhere */
@@ -304,12 +319,14 @@
   padding: 8px;
   border: none;
   border-radius: 6px;
-  background-color: #ff6b00;
+  background-color: #dc2626;
   color: white;
   cursor: pointer;
   font-weight: 600;
+  transition: all 0.2s ease;
 }
 
 .delete-btn:hover {
-  background-color: #e55d00;
+  background-color: #bb1a1a;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
 }

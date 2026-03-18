@@ -26,6 +26,12 @@ const orderSchema = new mongoose.Schema(
             enum: ["Cancelled", "Pending", "Pending Buyer Confirmation", "Pending Seller Confirmation", "Delivered"],
             default: "Pending",
         },
+        itemTitle: {
+            type: String, // Store snapshot in case item is deleted
+        },
+        itemImage: {
+            type: String, // Store snapshot in case item is deleted
+        },
         buyerConfirmed: {
             type: Boolean,
             default: false,

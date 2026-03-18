@@ -11,6 +11,7 @@ function AddItem() {
   const [previews, setPreviews] = useState([]);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -43,6 +44,13 @@ function AddItem() {
       return;
     }
 
+    if (!title.trim() || !description.trim() || !price || !category) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    setLoading(true);
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
@@ -62,123 +70,195 @@ function AddItem() {
       setCategory("");
       setPreviews([]);
       setImages([]);
-      setTimeout(() => setSuccess(false), 3000);
+      setTimeout(() => setSuccess(false), 4000);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to add item. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center py-10 bg-background">
-      <div className="w-full max-w-xl bg-white p-8 rounded-xl2 shadow-card">
+    <div className="additem-wrapper">
+      <div className="additem-container">
+        {/* Header Section */}
+        <div className="additem-header">
+          <h2>Sell Your Item</h2>
+          <p className="additem-header-subtitle">
+            Create a listing to sell your items to other campus members. Maximum 5 photos allowed.
+          </p>
+        </div>
 
-        <h2 className="text-2xl font-semibold text-secondary mb-6">
-          Add New Item
-        </h2>
+        {/* Messages Section */}
+        <div className="message-container">
+          {success && (
+            <div className="success-message">
+              Item submitted successfully! Your item is pending admin approval.
+            </div>
+          )}
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+        </div>
 
-        {success && (
-          <div className="mb-4 bg-blue-100 text-blue-700 p-3 rounded-lg text-sm">
-            ✅ Item submitted successfully! Your item is pending admin approval. It will appear in the marketplace once approved.
-          </div>
-        )}
-        {error && (
-          <div className="mb-4 bg-red-100 text-red-700 p-3 rounded-lg text-sm">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
-            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary"
-          >
-            <option value="">Select Category</option>
-            <option value="Books">Books</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Furniture">Furniture</option>
-            <option value="Hostel Essentials">Hostel Essentials</option>
-            <option value="Others">Others</option>
-          </select>
-
-          <input
-            type="text"
-            placeholder="Item Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-
-          <textarea
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-
-          <input
-            type="number"
-            placeholder="Price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-
-          {/* Multi-image upload */}
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">
-              Photos ({images.length}/5) — up to 5 images
+        {/* Form Section */}
+        <form onSubmit={handleSubmit} className="additem-form">
+          
+          {/* Category Field */}
+          <div className="form-group">
+            <label htmlFor="category">
+              <span className="icon">📂</span>
+              Category
+              <span className="required">*</span>
             </label>
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required
+            >
+              <option value="">Select a category</option>
+              <option value="Books">📚 Books & Notes</option>
+              <option value="Electronics">💻 Electronics</option>
+              <option value="Furniture">🪑 Furniture</option>
+              <option value="Hostel Essentials">🛏️ Hostel Essentials</option>
+              <option value="Others">📦 Others</option>
+            </select>
+          </div>
 
-            {images.length < 5 && (
-              <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer hover:border-primary hover:bg-blue-50 transition">
-                <span className="text-3xl mb-1">📷</span>
-                <span className="text-sm text-gray-500">Click to add photos</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-              </label>
-            )}
+          {/* Title Field */}
+          <div className="form-group">
+            <label htmlFor="title">
+              <span className="icon">✏️</span>
+              Item Title
+              <span className="required">*</span>
+            </label>
+            <input
+              id="title"
+              type="text"
+              placeholder="e.g., Vintage Wooden Chair"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength="100"
+              required
+            />
+            <div className="char-count">{title.length}/100 characters</div>
+          </div>
 
-            {previews.length > 0 && (
-              <div className="grid grid-cols-3 gap-2 mt-3">
+          {/* Description Field */}
+          <div className="form-group">
+            <label htmlFor="description">
+              <span className="icon">📝</span>
+              Description
+              <span className="required">*</span>
+            </label>
+            <textarea
+              id="description"
+              placeholder="Describe your item in detail (condition, features, why you're selling, etc.)"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              maxLength="500"
+              required
+            />
+            <div className="char-count">{description.length}/500 characters</div>
+          </div>
+
+          {/* Price Field */}
+          <div className="form-group">
+            <label htmlFor="price">
+              <span className="icon">💵</span>
+              Price (₹)
+              <span className="required">*</span>
+            </label>
+            <input
+              id="price"
+              type="number"
+              placeholder="Enter price in rupees"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              required
+              step="1"
+              min="0"
+              max="999999"
+            />
+          </div>
+
+          {/* Image Upload Field */}
+          <div className="upload-section">
+            <label className="upload-label" htmlFor="file-input">
+              <input
+                id="file-input"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageChange}
+              />
+              {images.length < 5 && (
+                <>
+                  <div className="upload-icon">📷</div>
+                  <div className="upload-text">
+                    <div className="main-text">Click to upload photos</div>
+                    <div className="sub-text">Drag and drop or select from your device</div>
+                  </div>
+                  <div className="upload-counter">{images.length} / 5 Images</div>
+                </>
+              )}
+              {images.length >= 5 && (
+                <div className="upload-text" style={{ color: '#0b4db7' }}>
+                  <div className="main-text">✓ Maximum images uploaded</div>
+                  <div className="sub-text">Click to replace an image</div>
+                </div>
+              )}
+            </label>
+          </div>
+
+          {/* Image Preview Section */}
+          {previews.length > 0 && (
+            <div className="image-preview-container">
+              <div className="image-preview-title">
+                <span>🖼️</span> Your Photos ({previews.length}/5)
+              </div>
+              <div className="image-preview">
                 {previews.map((src, i) => (
-                  <div key={i} className="relative group rounded-lg overflow-hidden border">
-                    <img src={src} alt={`preview-${i}`} className="w-full h-24 object-cover" />
+                  <div 
+                    key={i} 
+                    className={`image-preview-item ${i === 0 ? 'cover-image' : ''}`}
+                  >
+                    <img src={src} alt={`preview-${i}`} />
                     {i === 0 && (
-                      <span className="absolute top-1 left-1 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-                        Cover
-                      </span>
+                      <div className="image-cover-badge">
+                        <span>📌</span> Cover
+                      </div>
                     )}
                     <button
                       type="button"
                       onClick={() => removeImage(i)}
-                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                      className="remove-image-btn"
+                      title="Remove image"
                     >
                       ✕
                     </button>
                   </div>
                 ))}
               </div>
-            )}
-          </div>
+              {previews.length > 0 && (
+                <div className="image-reorder-hint">
+                  💡 First image will be shown as cover. Delete and re-upload to reorder.
+                </div>
+              )}
+            </div>
+          )}
 
-          <button
-            type="submit"
-            className="bg-primary text-white font-semibold py-3 rounded-lg hover:bg-primaryDark transition"
+          {/* Submit Button */}
+          <button 
+            type="submit" 
+            className="submit-btn"
+            disabled={loading}
           >
-            Submit Item
+            {loading ? "Publishing..." : "List Item for Sale"}
           </button>
-
         </form>
       </div>
     </div>

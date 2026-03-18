@@ -8,6 +8,7 @@ const hostelSchema = new mongoose.Schema({
   contact: String,
   roomType: String,
   capacity: String,
+  availableRooms: String,
   facilities: [String],
   description: String,
   images: [String],

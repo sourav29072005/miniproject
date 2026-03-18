@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 
+import Landing from "./pages/Landing";
 import Home from "./pages/home";
 import Register from "./pages/register";
 import Login from "./pages/login";
@@ -15,9 +16,12 @@ import Payment from "./pages/payment";
 import Notifications from "./pages/Notifications";
 import SetupProfile from "./pages/SetupProfile";
 
+import ChatPage from "./pages/ChatPage";
+
 import Admin from "./pages/admin";
 import AdminHostels from "./pages/AdminHostels";
 import AdminItems from "./pages/AdminItems";
+import AdminUsers from "./pages/AdminUsers";
 import HostelDetails from "./pages/HostelDetails";
 import Profile from "./pages/Profile";
 
@@ -28,22 +32,19 @@ import SellerProfile from "./pages/SellerProfile";
 import "./styles/global.css";
 
 function App() {
-  const { isLoggedIn, isAdmin, loading, setIsLoggedIn, setIsAdmin } = useAuth();
+  const { isLoggedIn, isAdmin, loading, setIsLoggedIn } = useAuth();
 
   if (loading) return null;
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* PUBLIC ROUTES */}
+        {/* PUBLIC ROUTES - Landing & Auth Pages */}
         {!isLoggedIn && (
           <>
-            <Route
-              path="/login"
-              element={<Login />}
-            />
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/" element={<Navigate to="/login" />} />
           </>
         )}
 
@@ -71,6 +72,14 @@ function App() {
               element={
                 <ProtectedRoute requireAdmin>
                   <AdminItems />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <AdminUsers />
                 </ProtectedRoute>
               }
             />
@@ -108,6 +117,7 @@ function App() {
             <Route path="payment" element={<Payment />} />
             <Route path="success" element={<Success />} />
             <Route path="notifications" element={<Notifications />} />
+            <Route path="chat" element={<ChatPage />} />
             <Route path="setup-profile" element={<SetupProfile />} />
             <Route path="profile" element={<Profile />} />
             <Route path="seller/:id" element={<SellerProfile />} />
