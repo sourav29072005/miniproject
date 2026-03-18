@@ -1,0 +1,274 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+
+// REGISTER
+exports.registerUser = async (req, res) => {
+  try {
+    const { email, password, name } = req.body;
+    const profilePic = req.file ? req.file.filename : null;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      email,
+      name,
+      password: hashedPassword,
+      role: "user",
+      profilePic
+    });
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        profilePic: user.profilePic
+      },
+    });
+
+  } catch (error) {
+    console.error("Registration error:", error);
+    if (error.code === 11000) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
+    res.status(400).json({ error: "Registration failed: " + error.message });
+  }
+};
+
+// LOGIN
+exports.loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ error: "User not found" });
+
+    // Check if user is banned
+    if (user.isBanned) {
+      return res.status(403).json({ 
+        error: "Your account has been banned",
+        banned: true,
+        banReason: user.banReason
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ error: "Wrong password" });
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        profilePic: user.profilePic,
+        department: user.department,
+        graduationYear: user.graduationYear,
+        bio: user.bio
+      },
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// UPDATE PROFILE
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, department, graduationYear, bio } = req.body;
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (department) updateData.department = department;
+    if (graduationYear) updateData.graduationYear = graduationYear;
+    if (bio) updateData.bio = bio;
+    if (req.file) updateData.profilePic = req.file.filename;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: updateData },
+      { new: true }
+    );
+
+    res.json({
+      message: "Profile updated successfully",
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        profilePic: user.profilePic,
+        department: user.department,
+        graduationYear: user.graduationYear,
+        bio: user.bio
+      }
+    });
+  } catch (error) {
+    console.error("Update profile error:", error);
+    res.status(500).json({ error: "Failed to update profile" });
+  }
+};
+
+// GET PUBLIC PROFILE
+exports.getPublicProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    res.json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePic: user.profilePic,
+        department: user.department,
+        bio: user.bio,
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// GET ALL USERS (ADMIN)
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    res.json(users);
+  } catch (error) {
+    console.error("getAllUsers error:", error);
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+};
+
+// BAN USER (ADMIN)
+exports.banUser = async (req, res) => {
+  try {
+    const { userId, banReason } = req.body;
+
+    // Verify admin is trying to ban
+    const admin = await User.findById(req.user.id);
+    if (admin.role !== "admin") {
+      return res.status(403).json({ error: "Only admins can ban users" });
+    }
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Prevent banning admin accounts
+    if (user.role === "admin") {
+      return res.status(403).json({ error: "Cannot ban admin accounts" });
+    }
+
+    // Ban the user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        isBanned: true,
+        banReason: banReason || "Banned by admin",
+        bannedAt: new Date(),
+      },
+      { new: true }
+    ).select("-password");
+
+    res.json({
+      message: "User banned successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Ban user error:", error);
+    res.status(500).json({ error: "Failed to ban user" });
+  }
+};
+
+// UNBAN USER (ADMIN)
+exports.unbanUser = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    // Verify admin is trying to unban
+    const admin = await User.findById(req.user.id);
+    if (admin.role !== "admin") {
+      return res.status(403).json({ error: "Only admins can unban users" });
+    }
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Unban the user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        isBanned: false,
+        banReason: null,
+        bannedAt: null,
+      },
+      { new: true }
+    ).select("-password");
+
+    res.json({
+      message: "User unbanned successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Unban user error:", error);
+    res.status(500).json({ error: "Failed to unban user" });
+  }
+};
+
+// DELETE USER (ADMIN)
+exports.deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    // Verify admin is trying to delete
+    const admin = await User.findById(req.user.id);
+    if (admin.role !== "admin") {
+      return res.status(403).json({ error: "Only admins can delete users" });
+    }
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Prevent deleting admin accounts
+    if (user.role === "admin") {
+      return res.status(403).json({ error: "Cannot delete admin accounts" });
+    }
+
+    // Delete the user
+    await User.findByIdAndDelete(userId);
+
+    res.json({
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete user error:", error);
+    res.status(500).json({ error: "Failed to delete user" });
+  }
+};
