@@ -7,6 +7,8 @@ function Payment() {
   const navigate = useNavigate();
 
   const [method, setMethod] = useState(""); // upi | card | netbanking | cod
+  const [handoverLocation, setHandoverLocation] = useState("");
+  const [customLocation, setCustomLocation] = useState("");
   const [processing, setProcessing] = useState(false);
 
   const [item, setItem] = useState(null);
@@ -36,6 +38,16 @@ function Payment() {
       return;
     }
 
+    if (!handoverLocation) {
+      alert("Please select a handover location.");
+      return;
+    }
+
+    if (handoverLocation === "Custom Location" && !customLocation.trim()) {
+      alert("Please specify your custom handover location.");
+      return;
+    }
+
     setProcessing(true);
 
     const itemId = localStorage.getItem("paymentItemId");
@@ -47,6 +59,8 @@ function Payment() {
         itemId,
         sellerId,
         price,
+        handoverLocation,
+        customLocation: handoverLocation === "Custom Location" ? customLocation.trim() : undefined,
       });
 
       // Clear payment info
@@ -133,7 +147,6 @@ function Payment() {
           <span>Net Banking</span>
         </label>
 
-        {/* ✅ COD */}
         <label className="payment-method">
           <input
             type="radio"
@@ -145,6 +158,35 @@ function Payment() {
           />
           <span>Cash on Delivery (COD)</span>
         </label>
+
+        {/* ✅ Handover Location Selection */}
+        <div className="handover-section" style={{marginTop: "20px", marginBottom: "20px", textAlign: "left"}}>
+          <p style={{ margin: "0 0 8px 0", fontWeight: 600 }}>Preferred Handover Location:</p>
+          <select 
+            value={handoverLocation} 
+            onChange={(e) => setHandoverLocation(e.target.value)}
+            disabled={processing}
+            style={{width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #ccc", marginBottom: "10px", fontSize: "14px"}}
+          >
+            <option value="">-- Select Location --</option>
+            <option value="Library">Library</option>
+            <option value="Main Canteen">Main Canteen</option>
+            <option value="Hostels Gate">Hostels Gate</option>
+            <option value="Main Gate">Main Gate</option>
+            <option value="Custom Location">Custom Location</option>
+          </select>
+
+          {handoverLocation === "Custom Location" && (
+            <input 
+              type="text" 
+              value={customLocation}
+              onChange={(e) => setCustomLocation(e.target.value)}
+              placeholder="Enter specific location..."
+              disabled={processing}
+              style={{width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px"}}
+            />
+          )}
+        </div>
 
         <button className="pay-now-btn" onClick={handlePayNow} disabled={processing}>
           {processing

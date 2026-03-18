@@ -24,6 +24,11 @@ function Register() {
       return;
     }
 
+    if (!email.endsWith("@cev.ac.in")) {
+      setError("Registration restricted to @cev.ac.in emails only");
+      return;
+    }
+
     try {
       const response = await api.post("auth/register", {
         name,

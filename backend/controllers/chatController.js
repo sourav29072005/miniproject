@@ -151,3 +151,31 @@ exports.clearChat = async (req, res) => {
     res.status(500).json({ error: "Failed to clear chat" });
   }
 };
+
+// 🔹 DELETE CONVERSATION ENTIRELY
+exports.deleteConversation = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const conversation = await Conversation.findById(conversationId);
+    
+    if (!conversation) {
+        return res.status(404).json({ error: "Conversation not found" });
+    }
+    
+    if (!conversation.participants.includes(req.user.id)) {
+        return res.status(403).json({ error: "Not authorized to delete this chat" });
+    }
+
+    // Delete all messages
+    const ChatMessage = require("../models/ChatMessage");
+    await ChatMessage.deleteMany({ conversationId });
+    
+    // Delete the conversation
+    await Conversation.findByIdAndDelete(conversationId);
+
+    res.json({ message: "Conversation deleted successfully" });
+  } catch (err) {
+    console.error("Delete conversation error:", err);
+    res.status(500).json({ error: "Failed to delete conversation" });
+  }
+};
