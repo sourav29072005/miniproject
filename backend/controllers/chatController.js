@@ -6,10 +6,19 @@ const User = require("../models/User");
 exports.getConversations = async (req, res) => {
   try {
     const userId = req.user.id;
-    const conversations = await Conversation.find({ participants: userId })
+    let conversations = await Conversation.find({ participants: userId })
       .populate("participants", "name email profilePic")
       .populate("lastMessage")
       .sort({ updatedAt: -1 });
+
+    conversations = conversations.map(convo => {
+      const c = convo.toObject();
+      const clearedAt = convo.clearedAt && convo.clearedAt.get(userId.toString());
+      if (clearedAt && c.lastMessage && new Date(c.lastMessage.createdAt) <= new Date(clearedAt)) {
+          c.lastMessage = null;
+      }
+      return c;
+    });
 
     res.json(conversations);
   } catch (err) {
@@ -33,7 +42,13 @@ exports.getMessages = async (req, res) => {
         return res.status(403).json({ error: "Not authorized to view these messages" });
     }
 
-    const messages = await ChatMessage.find({ conversationId }).sort({ createdAt: 1 });
+    const clearedAt = conversation.clearedAt && conversation.clearedAt.get(req.user.id.toString());
+    const query = { conversationId };
+    if (clearedAt) {
+        query.createdAt = { $gt: new Date(clearedAt) };
+    }
+
+    const messages = await ChatMessage.find(query).sort({ createdAt: 1 });
     
     // Clear unread count for this user when they fetch messages
     conversation.unreadCounts.set(req.user.id.toString(), 0);
@@ -105,5 +120,34 @@ exports.startConversation = async (req, res) => {
   } catch (err) {
     console.error("Start conversation error:", err);
     res.status(500).json({ error: "Failed to start conversation" });
+  }
+};
+
+// 🔹 CLEAR CHAT FOR A USER
+exports.clearChat = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const conversation = await Conversation.findById(conversationId);
+    
+    if (!conversation) {
+        return res.status(404).json({ error: "Conversation not found" });
+    }
+    
+    if (!conversation.participants.includes(req.user.id)) {
+        return res.status(403).json({ error: "Not authorized to modify this chat" });
+    }
+
+    if (!conversation.clearedAt) {
+        conversation.clearedAt = new Map();
+    }
+    
+    // Set clearedAt to current time
+    conversation.clearedAt.set(req.user.id.toString(), new Date());
+    await conversation.save();
+
+    res.json({ message: "Chat cleared successfully" });
+  } catch (err) {
+    console.error("Clear chat error:", err);
+    res.status(500).json({ error: "Failed to clear chat" });
   }
 };

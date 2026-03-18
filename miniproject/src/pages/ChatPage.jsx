@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import api, { BASE_URL } from "../api";
 import { io } from "socket.io-client";
-import { Send, MessageSquareText } from "lucide-react";
+import { Send, MessageSquareText, Trash2 } from "lucide-react";
 import "../styles/chat.css";
 
 function ChatPage() {
@@ -143,6 +143,26 @@ function ChatPage() {
     return convo.participants.find(p => p._id !== user.id);
   };
 
+  // 6. Clear Chat Handler
+  const handleClearChat = async () => {
+    if (!window.confirm("Are you sure you want to clear this chat?")) return;
+    try {
+      await api.delete(`chat/${activeChat._id}/clear`);
+      setMessages([]); // Clear locally
+      
+      // Update sidebar to remove lastMessage locally
+      setConversations(prev => prev.map(c => {
+        if (c._id === activeChat._id) {
+          return { ...c, lastMessage: null };
+        }
+        return c;
+      }));
+    } catch (err) {
+      console.error("Failed to clear chat", err);
+      alert("Failed to clear chat.");
+    }
+  };
+
   return (
     <div className="chat-container">
       {/* SIDEBAR - LIST OF CONVERSATIONS */}
@@ -208,6 +228,17 @@ function ChatPage() {
               <h3 className="font-bold text-gray-800 m-0">
                 {getOtherParticipant(activeChat)?.name || getOtherParticipant(activeChat)?.email}
               </h3>
+            </div>
+            
+            <div className="ml-auto">
+              <button 
+                onClick={handleClearChat}
+                className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded-full transition-colors flex items-center justify-center cursor-pointer"
+                title="Clear Chat"
+                type="button"
+              >
+                <Trash2 size={20} />
+              </button>
             </div>
           </div>
 
