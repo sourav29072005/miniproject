@@ -6,6 +6,11 @@ const User = require("../models/User");
 exports.registerUser = async (req, res) => {
   try {
     const { email, password, name } = req.body;
+
+    if (!email.endsWith("@cev.ac.in")) {
+      return res.status(400).json({ error: "Registration restricted to @cev.ac.in emails only" });
+    }
+
     const profilePic = req.file ? req.file.filename : null;
 
     const hashedPassword = await bcrypt.hash(password, 10);

@@ -5,7 +5,7 @@ const Notification = require("../models/Notification");
 // 🔹 CREATE ORDER
 exports.createOrder = async (req, res) => {
     try {
-        const { itemId, price } = req.body;
+        const { itemId, price, handoverLocation, customLocation } = req.body;
         const buyerId = req.user.id;
 
         console.log(`Creating order for Item: ${itemId}, Buyer: ${buyerId}`);
@@ -36,6 +36,8 @@ exports.createOrder = async (req, res) => {
             status: "Pending",
             itemTitle: item.title,
             itemImage: item.images && item.images.length > 0 ? item.images[0] : item.image,
+            handoverLocation,
+            customLocation
         });
 
         // Mark item as sold
@@ -197,5 +199,43 @@ exports.cancelOrder = async (req, res) => {
     } catch (error) {
         console.error("Cancel order error:", error);
         res.status(500).json({ error: "Failed to cancel order" });
+    }
+};
+
+// 🔹 SCHEDULE HANDOVER (SELLER)
+exports.scheduleHandover = async (req, res) => {
+    try {
+        const { handoverDate, handoverTime } = req.body;
+        const order = await Order.findById(req.params.id);
+        
+        if (!order) return res.status(404).json({ error: "Order not found" });
+
+        // Verify if the user is the seller
+        if (order.sellerId.toString() !== req.user.id) {
+            return res.status(401).json({ error: "Only the seller can schedule handover" });
+        }
+
+        order.handoverDate = handoverDate;
+        order.handoverTime = handoverTime;
+        
+        await order.save();
+        
+        // Notify buyer
+        try {
+            const Notification = require("../models/Notification");
+            await Notification.create({
+                recipient: order.buyerId,
+                message: `Handover scheduled for your order "${order.itemTitle}" on ${new Date(handoverDate).toLocaleDateString()} at ${handoverTime}.`,
+                type: "Handover Scheduled",
+                orderId: order._id,
+            });
+        } catch (notifError) {
+             console.error("Failed to create notification:", notifError);
+        }
+
+        res.json({ message: "Handover scheduled successfully", order });
+    } catch (error) {
+        console.error("Schedule handover error:", error);
+        res.status(500).json({ error: "Failed to schedule handover" });
     }
 };

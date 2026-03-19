@@ -40,6 +40,18 @@ const orderSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        handoverLocation: {
+            type: String,
+        },
+        customLocation: {
+            type: String,
+        },
+        handoverDate: {
+            type: Date,
+        },
+        handoverTime: {
+            type: String,
+        },
     },
     { timestamps: true }
 );
