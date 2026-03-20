@@ -1,9 +1,10 @@
-import { Bell, Check, ExternalLink, Menu, X, Mail } from "lucide-react";
+import { Bell, Check, ExternalLink, Menu, X, Mail, ShoppingCart } from "lucide-react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import ProfileDrawer from "./ProfileDrawer";
 import Messages from "../Messages";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
 import api, { getNotifications, markNotificationAsRead, BASE_URL } from "../../api";
 import { io } from "socket.io-client";
 
@@ -18,6 +19,7 @@ const routeTitles = {
 
 const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
   const { user, logout } = useAuth();
+  const { cartItems } = useCart();
   const location = useLocation();
   const navigate = useNavigate();
   const title = routeTitles[location.pathname] || "Dashboard";
@@ -124,6 +126,19 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
         </div>
 
         <div className="relative z-20 flex items-center gap-6">
+          {/* Cart Icon */}
+          <button
+            onClick={() => navigate("/cart")}
+            className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"
+          >
+            <ShoppingCart className="w-5 h-5 text-white" />
+            {cartItems?.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-primaryDark animate-pulse">
+                {cartItems.length > 9 ? "9+" : cartItems.length}
+              </span>
+            )}
+          </button>
+
           {/* Message Icon */}
           <button
             onClick={() => navigate("/chat")}

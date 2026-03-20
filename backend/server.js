@@ -28,6 +28,8 @@ app.use("/api/orders", require("./routes/orderRoutes"));
 app.use("/api/notifications", require("./routes/notificationRoutes"));
 app.use("/api/messages", require("./routes/messageRoutes"));
 app.use("/api/chat", require("./routes/chatRoutes"));
+app.use("/api/reviews", require("./routes/reviewRoutes"));
+app.use("/api/cart", require("./routes/cartRoutes"));
 
 /* -------- TEST ROUTE -------- */
 

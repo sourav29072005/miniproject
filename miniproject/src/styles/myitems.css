@@ -60,6 +60,13 @@
   gap: 16px;
 }
 
+@media (max-width: 640px) {
+  .items-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
 /* ===== ITEM CARD ===== */
 .item-card {
   background: white;
@@ -259,9 +266,9 @@
 
 .action-btn {
   flex: 1;
-  padding: 8px 0;
+  padding: 10px 0;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -271,6 +278,10 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
 }
 
 .action-btn.full-width {

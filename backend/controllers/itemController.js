@@ -37,7 +37,7 @@ exports.getItems = async (req, res) => {
     const items = await Item.find({
       approved: true,
       status: { $ne: "sold" },
-    }).populate("user", "email name profilePic");
+    }).populate("user", "email name profilePic sellerLevel averageRating totalReviews");
 
     res.json(items);
   } catch (error) {
@@ -49,7 +49,7 @@ exports.getItems = async (req, res) => {
 // 🔹 GET SINGLE ITEM
 exports.getItemById = async (req, res) => {
   try {
-    const item = await Item.findById(req.params.id).populate("user", "email name profilePic");
+    const item = await Item.findById(req.params.id).populate("user", "email name profilePic sellerLevel averageRating totalReviews");
     if (!item) {
       return res.status(404).json({ error: "Item not found" });
     }
@@ -244,7 +244,7 @@ exports.getItemsByUser = async (req, res) => {
       user: req.params.userId,
       approved: true,
       status: "available"
-    }).populate("user", "name profilePic email");
+    }).populate("user", "name profilePic email sellerLevel averageRating totalReviews");
 
     res.json(items);
   } catch (error) {

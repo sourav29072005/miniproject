@@ -10,6 +10,9 @@ function MyItems() {
   const [deleteId, setDeleteId] = useState(null);
   const [updateConfirmItem, setUpdateConfirmItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  // Filter state
+  const [filter, setFilter] = useState("All"); // "All", "Available", "Sold", "Delivered"
 
   // Scheduling state
   const [schedulingItem, setSchedulingItem] = useState(null);
@@ -31,11 +34,11 @@ function MyItems() {
       // Process active listings
       itemsData.forEach((item) => {
         const activeOrder = salesData.find(
-          (o) =>
-            o.itemId &&
-            o.itemId._id === item._id &&
-            o.status !== "Cancelled" &&
-            o.status !== "Delivered"
+          (o) => {
+            const hasLegacyMatch = o.itemId && (o.itemId._id === item._id || o.itemId === item._id);
+            const hasArrayMatch = o.items && o.items.some(i => (i.itemId?._id || i.itemId)?.toString() === item._id.toString());
+            return (hasLegacyMatch || hasArrayMatch) && o.status !== "Cancelled";
+          }
         );
 
         formattedItems.push({
@@ -76,46 +79,56 @@ function MyItems() {
 
       // Process "ghost" orders (orders where the item has been deleted)
       salesData.forEach((order) => {
-         // If this order doesn't have an associated item, or its item isn't in itemsData
-         const itemStillExists = order.itemId && itemsData.some(i => i._id === order.itemId._id);
-         if (!itemStillExists && order.status !== "Cancelled") {
-           // Create a ghost card for the deleted item's order
-           let image = null;
-           if (order.itemId && order.itemId.image) {
-             image = `${BASE_URL}/uploads/${order.itemId.image}`;
-           } else if (order.itemImage) {
-             image = `${BASE_URL}/uploads/${order.itemImage}`;
-           }
+         if (order.status === "Cancelled") return;
+         
+         // Combine legacy and new items into one array to check
+         const orderItemsToCheck = order.items && order.items.length > 0 
+           ? order.items 
+           : (order.itemId || order.itemTitle ? [{ itemId: order.itemId, itemTitle: order.itemTitle, itemImage: order.itemImage, price: order.price }] : []);
 
-           formattedItems.push({
-             id: `ghost-${order._id}`,
-             title: (order.itemId && order.itemId.title) ? order.itemId.title : (order.itemTitle || "Unknown Item (Deleted)"),
-             description: "You have deleted this item from your listings, but its order history remains.",
-             price: order.price,
-             category: "Unknown",
-             approved: true,
-             rejectionReason: null,
-             rejectedAt: null,
-             image: image,
-             status: order.status === "Delivered" ? "delivered" : "sold",
-             isDeleted: true,
-             activeOrder: {
-               id: order._id,
-               buyerConfirmed: order.buyerConfirmed,
-               sellerConfirmed: order.sellerConfirmed,
-               status: order.status,
-               buyer: order.buyerId
-                 ? order.buyerId.name || order.buyerId.email
-                 : "Unknown",
-               buyerId: order.buyerId ? (order.buyerId._id || order.buyerId) : null,
-               createdAt: order.createdAt,
-               handoverLocation: order.handoverLocation,
-               customLocation: order.customLocation,
-               handoverDate: order.handoverDate,
-               handoverTime: order.handoverTime,
-             }
-           });
-         }
+         orderItemsToCheck.forEach((orderedItem) => {
+            // Check if this specific item still exists in itemsData
+            const itemStillExists = orderedItem.itemId && itemsData.some(i => i._id === (orderedItem.itemId._id || orderedItem.itemId));
+
+            if (!itemStillExists) {
+               // Create a ghost card for this specific deleted item
+               let image = null;
+               if (orderedItem.itemId && orderedItem.itemId.image) {
+                 image = `${BASE_URL}/uploads/${orderedItem.itemId.image}`;
+               } else if (orderedItem.itemImage) {
+                 image = `${BASE_URL}/uploads/${orderedItem.itemImage}`;
+               }
+
+               formattedItems.push({
+                 id: `ghost-${order._id}-${orderedItem.itemId?._id || orderedItem.itemId || Math.random()}`,
+                 title: (orderedItem.itemId && orderedItem.itemId.title) ? orderedItem.itemId.title : (orderedItem.itemTitle || "Unknown Item (Deleted)"),
+                 description: "You have deleted this item from your listings, but its order history remains.",
+                 price: orderedItem.price || order.price,
+                 category: "Unknown",
+                 approved: true,
+                 rejectionReason: null,
+                 rejectedAt: null,
+                 image: image,
+                 status: order.status === "Delivered" ? "delivered" : "sold",
+                 isDeleted: true,
+                 activeOrder: {
+                   id: order._id,
+                   buyerConfirmed: order.buyerConfirmed,
+                   sellerConfirmed: order.sellerConfirmed,
+                   status: order.status,
+                   buyer: order.buyerId
+                     ? order.buyerId.name || order.buyerId.email
+                     : "Unknown",
+                   buyerId: order.buyerId ? (order.buyerId._id || order.buyerId) : null,
+                   createdAt: order.createdAt,
+                   handoverLocation: order.handoverLocation,
+                   customLocation: order.customLocation,
+                   handoverDate: order.handoverDate,
+                   handoverTime: order.handoverTime,
+                 }
+               });
+            }
+         });
       });
 
       setMyItems(formattedItems);
@@ -217,7 +230,16 @@ function MyItems() {
   };
 
   const availableCount = myItems.filter(i => i.status === "available").length;
-  const soldCount = myItems.filter(i => i.status !== "available").length;
+  const soldCount = myItems.filter(i => i.status === "sold").length;
+  const deliveredCount = myItems.filter(i => i.status === "delivered").length;
+
+  const filteredItems = myItems.filter((item) => {
+    if (filter === "All") return true;
+    if (filter === "Available") return item.status === "available";
+    if (filter === "Sold") return item.status === "sold";
+    if (filter === "Delivered") return item.status === "delivered";
+    return true;
+  });
 
   const getStatusBadges = (item) => {
     const badges = [];
@@ -251,7 +273,10 @@ function MyItems() {
   };
 
   const canSellerHandover = (item) => {
-    if (!item.activeOrder || !item.activeOrder.createdAt) return false;
+    if (!item.activeOrder) return false;
+    if (item.activeOrder.buyerConfirmed) return true; // Bypass timer if buyer already confirmed
+    if (!item.activeOrder.createdAt) return false;
+    
     const orderTime = new Date(item.activeOrder.createdAt).getTime();
     const oneHourInMs = 1 * 60 * 60 * 1000;
     return Date.now() - orderTime >= oneHourInMs;
@@ -263,7 +288,7 @@ function MyItems() {
       const timeRemaining = Math.ceil(((orderTime + 1 * 60 * 60 * 1000) - Date.now()) / 1000 / 60);
       return `⏳ Available in ${timeRemaining}m`;
     }
-    return item.activeOrder.buyerConfirmed ? "✅ Confirm Handover" : "📦 Handed Over";
+    return item.activeOrder.buyerConfirmed ? "✅ Confirm Handover" : "✅ Handed Over";
   };
 
   return (
@@ -279,14 +304,37 @@ function MyItems() {
       {/* STATS */}
       {!loading && myItems.length > 0 && (
         <div className="myitems-stats">
-          <div className="stat-pill">
+          <div 
+            className={`stat-pill ${filter === "All" ? "active" : ""}`}
+            onClick={() => setFilter("All")}
+            style={{ cursor: "pointer", opacity: filter === "All" ? 1 : 0.5, transition: "opacity 0.2s" }}
+            title="Show all items"
+          >
             <span className="stat-count">{myItems.length}</span> Total
           </div>
-          <div className="stat-pill">
+          <div 
+            className={`stat-pill ${filter === "Available" ? "active" : ""}`}
+            onClick={() => setFilter("Available")}
+            style={{ cursor: "pointer", opacity: filter === "Available" ? 1 : 0.5, transition: "opacity 0.2s" }}
+            title="Show available items"
+          >
             <span className="stat-count" style={{ color: "#16a34a" }}>{availableCount}</span> Available
           </div>
-          <div className="stat-pill">
-            <span className="stat-count" style={{ color: "#dc2626" }}>{soldCount}</span> Sold
+          <div 
+            className={`stat-pill ${filter === "Sold" ? "active" : ""}`}
+            onClick={() => setFilter("Sold")}
+            style={{ cursor: "pointer", opacity: filter === "Sold" ? 1 : 0.5, transition: "opacity 0.2s" }}
+            title="Show sold (pending delivery) items"
+          >
+            <span className="stat-count" style={{ color: "#f59e0b" }}>{soldCount}</span> Sold
+          </div>
+          <div 
+            className={`stat-pill ${filter === "Delivered" ? "active" : ""}`}
+            onClick={() => setFilter("Delivered")}
+            style={{ cursor: "pointer", opacity: filter === "Delivered" ? 1 : 0.5, transition: "opacity 0.2s" }}
+            title="Show delivered items"
+          >
+            <span className="stat-count" style={{ color: "#2563eb" }}>{deliveredCount}</span> Delivered
           </div>
         </div>
       )}
@@ -331,9 +379,11 @@ function MyItems() {
         <p className="no-items">Loading your listings...</p>
       ) : myItems.length === 0 ? (
         <p className="no-items">📭 You haven't listed any items yet.</p>
+      ) : filteredItems.length === 0 ? (
+        <p className="no-items">📭 No items match the filter '{filter}'.</p>
       ) : (
         <div className="items-grid">
-          {myItems.map((item) => {
+          {filteredItems.map((item) => {
             const statusText = getStatusText(item);
             const badges = getStatusBadges(item);
 
@@ -377,7 +427,7 @@ function MyItems() {
                       <span className="order-info-text">Buyer: {item.activeOrder.buyer}</span>
                       
                       {/* Handover Details */}
-                      {(item.activeOrder.handoverLocation || item.activeOrder.handoverDate) && (
+                      {item.status !== "delivered" && (item.activeOrder.handoverLocation || item.activeOrder.handoverDate) && (
                         <div className="handover-box">
                           <div className="handover-header">
                             <span>🤝</span> Handover Details
@@ -412,23 +462,24 @@ function MyItems() {
                 </div>
 
                 {/* ACTIONS */}
+                {/* ACTIONS */}
                 <div className="item-actions">
                   {/* Management row (Edit / Delete) */}
-                  <div className="actions-row management-actions">
-                    {item.status !== "sold" && item.status !== "delivered" && (
+                  {item.status !== "sold" && item.status !== "delivered" && (
+                    <div className="actions-row management-actions">
                       <button className="action-btn btn-edit" onClick={() => setEditingItem({ ...item })}>
                         ✏️ Edit
                       </button>
-                    )}
-                    <button className="action-btn btn-delete" onClick={() => setDeleteId(item.id)}>
-                      {item.status === "sold" || item.status === "delivered" ? "🗑 Remove" : "🗑 Delete"}
-                    </button>
-                  </div>
+                      <button className="action-btn btn-delete" onClick={() => setDeleteId(item.id)}>
+                        🗑 Delete
+                      </button>
+                    </div>
+                  )}
 
                   {/* Order processing row (Schedule / Message / Confirm) */}
-                  {item.status === "sold" && item.activeOrder && (
+                  {(item.status === "sold" || item.status === "delivered") && item.activeOrder && (
                     <div className="actions-row order-actions">
-                      {item.activeOrder.buyerId && (
+                      {item.status === "sold" && item.activeOrder.buyerId && (
                         <button 
                           className="action-btn btn-message" 
                           onClick={() => contactBuyer(item.activeOrder.buyerId)}
@@ -437,18 +488,20 @@ function MyItems() {
                         </button>
                       )}
 
-                      <button 
-                        className="action-btn btn-schedule" 
-                        onClick={() => {
-                          setSchedulingItem(item);
-                          setHandoverDate(item.activeOrder.handoverDate ? item.activeOrder.handoverDate.split('T')[0] : "");
-                          setHandoverTime(item.activeOrder.handoverTime || "");
-                        }}
-                      >
-                        🗓️ Schedule
-                      </button>
+                      {item.status === "sold" && (
+                        <button 
+                          className="action-btn btn-schedule" 
+                          onClick={() => {
+                            setSchedulingItem(item);
+                            setHandoverDate(item.activeOrder.handoverDate ? item.activeOrder.handoverDate.split('T')[0] : "");
+                            setHandoverTime(item.activeOrder.handoverTime || "");
+                          }}
+                        >
+                          🗓️ Schedule
+                        </button>
+                      )}
 
-                      {!item.activeOrder.sellerConfirmed && (
+                      {item.status === "sold" && !item.activeOrder.sellerConfirmed && (
                         <button 
                           className="action-btn btn-handover full-width" 
                           onClick={() => confirmHandedOver(item.id)}
@@ -458,6 +511,14 @@ function MyItems() {
                           {getHandoverButtonText(item)}
                         </button>
                       )}
+
+                      <button 
+                         className="action-btn full-width"
+                         style={{ backgroundColor: "#f3f4f6", color: "#374151" }}
+                         onClick={() => navigate(`/order-details/${item.activeOrder.id}`)}
+                      >
+                        📄 View Order Details
+                      </button>
                     </div>
                   )}
                 </div>

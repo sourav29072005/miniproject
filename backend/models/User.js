@@ -45,6 +45,33 @@ const userSchema = new mongoose.Schema({
   graduationYear: {
     type: String,
     default: null
+  },
+  // --- Cart ---
+  cartItems: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Item'
+  }],
+  // --- Seller Progression & Earnings ---
+  sellerLevel: {
+    type: String,
+    default: "New Seller",
+    enum: ["New Seller", "Intermediate", "Advanced", "Top Rated Seller"]
+  },
+  totalEarnings: {
+    type: Number,
+    default: 0
+  },
+  completedSales: {
+    type: Number,
+    default: 0
+  },
+  averageRating: {
+    type: Number,
+    default: 0
+  },
+  totalReviews: {
+    type: Number,
+    default: 0
   }
 }, { timestamps: true });
 
