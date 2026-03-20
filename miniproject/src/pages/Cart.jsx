@@ -1,0 +1,198 @@
+import React, { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import { Trash2, ShoppingBag, ArrowRight, ShieldCheck, User } from "lucide-react";
+import { BASE_URL } from "../api";
+import "../styles/cart.css";
+
+function Cart() {
+  const { cartItems, removeFromCart } = useCart();
+  const navigate = useNavigate();
+
+  // Group by seller
+  const sellerGroups = useMemo(() => {
+    if (!cartItems) return {};
+    const groups = {};
+    cartItems.forEach(item => {
+      const sellerId = item.user?._id || "unknown";
+      if (!groups[sellerId]) {
+        groups[sellerId] = {
+          seller: item.user || { name: "Unknown Seller" },
+          items: [],
+          total: 0
+        };
+      }
+      groups[sellerId].items.push(item);
+      groups[sellerId].total += Number(item.price);
+    });
+    return groups;
+  }, [cartItems]);
+
+  const checkoutGroup = (group) => {
+    localStorage.setItem("paymentItems", JSON.stringify(group.items.map(i => ({
+      itemId: i._id,
+      price: i.price,
+      title: i.title,
+      sellerId: i.user?._id || i.user
+    }))));
+    navigate("/payment");
+  };
+
+  if (!cartItems || cartItems.length === 0) {
+    return (
+      <div className="cart-page-bg flex items-center justify-center p-6">
+        <div className="empty-cart-container w-full">
+          <div className="w-32 h-32 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-8 relative">
+            <ShoppingBag size={48} className="text-indigo-400" />
+            <div className="absolute top-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
+              <span className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span>
+            </div>
+          </div>
+          <h2 className="text-3xl font-bold text-slate-800 mb-3">Your cart is empty</h2>
+          <p className="text-slate-500 mb-10 max-w-sm mx-auto text-lg leading-relaxed">
+            Looks like you haven't added any items yet. Discover amazing deals in the marketplace.
+          </p>
+          <button 
+            onClick={() => navigate("/marketplace")}
+            className="premium-checkout-btn mx-auto text-lg px-8 py-4"
+          >
+            Start Shopping <ArrowRight size={20} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="cart-page-bg">
+      <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-10 gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl cart-header-title mb-2">Shopping Cart</h1>
+            <p className="text-slate-500 text-base md:text-lg">
+              You have <span className="font-semibold text-slate-700">{cartItems.length} items</span> waiting for checkout.
+            </p>
+          </div>
+          <button 
+            onClick={() => navigate("/marketplace")}
+            className="back-to-shop-btn w-full md:w-auto justify-center"
+          >
+            Continue Shopping
+          </button>
+        </div>
+
+        {/* Global Security Badge */}
+        <div className="flex items-center gap-2 mb-8 bg-emerald-50 text-emerald-700 px-4 py-3 rounded-xl border border-emerald-100 max-w-fit">
+          <ShieldCheck size={20} />
+          <span className="text-sm font-medium">Safe & Secure grouped checkouts. Your money is protected.</span>
+        </div>
+
+        {/* Seller Groups Grid */}
+        <div className="grid gap-10">
+          {Object.values(sellerGroups).map((group, index) => (
+            <div key={index} className="seller-group-card">
+              
+              {/* Premium Seller Header */}
+              <div className="seller-header-banner flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="flex items-center gap-3 md:gap-4 w-full sm:w-auto">
+                  <div className="w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-full shadow-md border-2 border-white overflow-hidden bg-white">
+                    {group.seller.profilePic ? (
+                      <img src={`${BASE_URL}/uploads/${group.seller.profilePic}`} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">
+                        <User size={24} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-400">Seller Package</span>
+                    </div>
+                    <h3 className="text-lg md:text-xl font-bold text-slate-800 truncate">{group.seller.name || "Seller Name"}</h3>
+                  </div>
+                </div>
+                
+                {/* Visual Connector / Badge */}
+                <div className="inline-flex sm:flex items-center gap-2 text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 font-semibold text-xs md:text-sm mt-3 sm:mt-0">
+                  {group.items.length} {group.items.length === 1 ? 'Item' : 'Items'} Group
+                </div>
+              </div>
+
+              {/* Items List */}
+              <div className="flex flex-col">
+                {group.items.map((item, i) => (
+                  <div key={item._id} className="cart-item-row gap-6">
+                    <div className="item-img-container cursor-pointer" onClick={() => {
+                        localStorage.setItem("selectedItemId", item._id);
+                        navigate('/item-details');
+                    }}>
+                      {(item.images?.length > 0 || item.image) ? (
+                        <img 
+                          src={`${BASE_URL}/uploads/${item.images?.[0] || item.image}`} 
+                          alt={item.title} 
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Image</div>
+                      )}
+                    </div>
+                    
+                    <div className="flex-1 flex flex-col justify-between py-1">
+                      <div>
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start md:gap-4 mb-1">
+                          <h3 className="text-base sm:text-lg font-bold text-slate-800 line-clamp-2 hover:text-indigo-600 transition-colors cursor-pointer pr-2"
+                              onClick={() => {
+                                localStorage.setItem("selectedItemId", item._id);
+                                navigate('/item-details');
+                              }}>
+                            {item.title}
+                          </h3>
+                          <p className="text-lg sm:text-xl font-extrabold text-slate-900 whitespace-nowrap mt-1 sm:mt-0">₹ {item.price}</p>
+                        </div>
+                        <p className="text-xs sm:text-sm text-slate-500 line-clamp-1 md:line-clamp-2">{item.description || "No description provided."}</p>
+                      </div>
+                      
+                      <div className="flex items-end justify-between mt-4">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-600 text-xs font-bold border border-emerald-100">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          In Stock
+                        </span>
+                        
+                        <button 
+                          onClick={() => removeFromCart(item._id)}
+                          className="remove-item-btn"
+                          title="Remove item"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Checkout Action Bar */}
+              <div className="checkout-action-bar flex-col sm:flex-row gap-4 items-start sm:items-center">
+                <div className="flex flex-col w-full sm:w-auto">
+                  <span className="text-xs md:text-sm font-semibold text-slate-500 mb-1">Package Subtotal</span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl md:text-3xl font-extrabold text-slate-900">₹ {group.total.toLocaleString()}</span>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={() => checkoutGroup(group)}
+                  className="premium-checkout-btn w-full sm:w-auto justify-center"
+                >
+                  Checkout {group.items.length} {group.items.length === 1 ? 'Item' : 'Items'} <ArrowRight size={18} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Cart;

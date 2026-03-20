@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api, { BASE_URL } from "../api";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 import "../styles/itemdetails.css";
 
 function ItemDetails() {
@@ -9,7 +10,9 @@ function ItemDetails() {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [lightboxImg, setLightboxImg] = useState(null);
+  const [addingToCart, setAddingToCart] = useState(false);
   const { user } = useAuth();
+  const { addToCart } = useCart();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,7 +40,10 @@ function ItemDetails() {
         image: allImages[0] || null,
         allImages,
         seller: freshItem.user?.name || freshItem.user?.email || "Seller",
-        sellerId: freshItem.user?._id || freshItem.user || "Unknown"
+        sellerId: freshItem.user?._id || freshItem.user || "Unknown",
+        sellerLevel: freshItem.user?.sellerLevel || "New Seller",
+        averageRating: freshItem.user?.averageRating || 0,
+        totalReviews: freshItem.user?.totalReviews || 0
       });
     } catch (err) {
       console.error("Failed to load item:", err);
@@ -62,11 +68,28 @@ function ItemDetails() {
     }
   };
 
+  const handleAddToCart = async () => {
+    setAddingToCart(true);
+    const res = await addToCart(item.id);
+    setAddingToCart(false);
+    if (!res.success) {
+      alert(res.error);
+    } else {
+      alert("Added to cart!");
+    }
+  };
+
   const confirmBuy = () => {
     if (item.status === "sold") { alert("Sorry! This item has just been sold."); navigate("/marketplace"); return; }
-    localStorage.setItem("paymentItemId", item.id);
-    localStorage.setItem("paymentItemSellerId", item.sellerId);
-    localStorage.setItem("paymentItemPrice", item.price);
+    
+    // Store as array of items for unified payment format
+    localStorage.setItem("paymentItems", JSON.stringify([{
+      itemId: item.id,
+      price: item.price,
+      title: item.title,
+      sellerId: item.sellerId
+    }]));
+    
     setShowModal(false);
     navigate("/payment");
   };
@@ -160,8 +183,13 @@ function ItemDetails() {
                 )}
               </div>
               <div className="seller-text-col">
-                <p className="seller-name-bold">{item.seller}</p>
-                <p className="seller-profile-link">View full profile →</p>
+                <p className="seller-name-bold" style={{marginBottom: 0}}>{item.seller}</p>
+                <div style={{display: 'flex', alignItems: 'center', gap: '6px', margin: '4px 0'}}>
+                  <span style={{backgroundColor: '#e0e7ff', color: '#3730a3', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold'}}>{item.sellerLevel}</span>
+                  <span style={{fontSize: '12px', color: '#f59e0b', fontWeight: 'bold'}}>★ {item.averageRating}</span>
+                  <span style={{fontSize: '11px', color: '#64748b'}}>({item.totalReviews})</span>
+                </div>
+                <p className="seller-profile-link" style={{marginTop: 0}}>View full profile →</p>
               </div>
               <span className="seller-chevron">›</span>
             </div>
@@ -176,9 +204,14 @@ function ItemDetails() {
                 <>
                   <button className="contact-btn" onClick={contactSeller}>✉ Contact Seller</button>
                   {item.status !== "sold" ? (
-                    <button className="buy-final-btn" onClick={() => setShowModal(true)}>
-                      🛒 Proceed to Payment
-                    </button>
+                    <div style={{display: 'flex', gap: '8px'}}>
+                      <button className="buy-final-btn" style={{flex: 1, backgroundColor: "#f3f4f6", color: "#374151"}} onClick={handleAddToCart} disabled={addingToCart}>
+                        {addingToCart ? "Adding..." : "🛒 Add to Cart"}
+                      </button>
+                      <button className="buy-final-btn" style={{flex: 1}} onClick={() => setShowModal(true)}>
+                        ⚡ Buy Now
+                      </button>
+                    </div>
                   ) : (
                     <button className="buy-final-btn" disabled>Sold Out</button>
                   )}

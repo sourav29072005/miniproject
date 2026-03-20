@@ -1,4 +1,4 @@
-import { X, User, Settings, LogOut, Pencil, Package } from "lucide-react";
+import { X, User, Settings, LogOut, Pencil, Package, TrendingUp, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { BASE_URL } from "../../api";
@@ -97,8 +97,30 @@ function ProfileDrawer({ open, onClose, onLogout }) {
               }}
               className="flex items-center gap-3 w-full text-left p-3 rounded-lg hover:bg-gray-100"
             >
-              <Package size={18} />
+              <ShoppingBag size={18} />
               My Orders
+            </button>
+
+            <button
+              onClick={() => {
+                onClose();
+                navigate("/my-items");
+              }}
+              className="flex items-center gap-3 w-full text-left p-3 rounded-lg hover:bg-gray-100"
+            >
+              <Package size={18} />
+              My Listings
+            </button>
+
+            <button
+              onClick={() => {
+                onClose();
+                navigate("/earnings");
+              }}
+              className="flex items-center gap-3 w-full text-left p-3 rounded-lg hover:bg-gray-100"
+            >
+              <TrendingUp size={18} />
+              Earnings
             </button>
 
             <button className="flex items-center gap-3 w-full text-left p-3 rounded-lg hover:bg-gray-100">

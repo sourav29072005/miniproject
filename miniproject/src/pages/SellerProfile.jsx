@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api, { BASE_URL } from "../api";
-import { ArrowLeft, User as UserIcon, Package, MessageCircle } from "lucide-react";
+import { ArrowLeft, User as UserIcon, Package, MessageCircle, Star } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import "./sellerprofile.css";
 
@@ -10,7 +10,9 @@ function SellerProfile() {
     const navigate = useNavigate();
     const [seller, setSeller] = useState(null);
     const [items, setItems] = useState([]);
+    const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState("listings");
     const { user } = useAuth();
     
     // Safety check - if this is the currently logged in user, don't show the contact button
@@ -20,12 +22,14 @@ function SellerProfile() {
         const fetchSellerData = async () => {
             try {
                 setLoading(true);
-                const [profileRes, itemsRes] = await Promise.all([
+                const [profileRes, itemsRes, reviewRes] = await Promise.all([
                     api.get(`auth/profile/${id}`),
-                    api.get(`items/user/${id}`)
+                    api.get(`items/user/${id}`),
+                    api.get(`reviews/${id}`)
                 ]);
                 setSeller(profileRes.data.user);
                 setItems(itemsRes.data);
+                setReviews(reviewRes.data);
             } catch (err) {
                 console.error("Failed to fetch seller data:", err);
             } finally {
@@ -73,16 +77,21 @@ function SellerProfile() {
         : seller.email.substring(0, 2).toUpperCase();
 
     return (
-        <div className="profile-page-container">
-            <div className="profile-header-banner">
-                <button onClick={() => navigate(-1)} className="back-btn-circle">
-                    <ArrowLeft size={20} />
+        <div className="bg-white min-h-screen pb-16 font-sans">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+                
+                {/* Back Navigation */}
+                <button 
+                    onClick={() => navigate(-1)} 
+                    className="flex items-center gap-2 text-gray-400 hover:text-gray-900 transition-colors mb-10 font-bold tracking-tight"
+                >
+                    <ArrowLeft size={18} /> Back
                 </button>
-            </div>
 
-            <div className="profile-content-card max-w-2xl">
-                <div className="profile-avatar-wrapper">
-                    <div className="profile-avatar-large shadow-lg">
+                {/* Top Section: Profile Header & Stats */}
+                <div className="flex flex-col md:flex-row gap-10 items-start pb-12 mb-12 border-b border-gray-100">
+                    {/* Avatar */}
+                    <div className="w-32 h-32 md:w-44 md:h-44 flex-shrink-0 rounded-full overflow-hidden bg-gray-50 border-4 border-gray-100 shadow-sm relative">
                         {seller.profilePic ? (
                             <img
                                 src={`${BASE_URL}/uploads/${seller.profilePic}`}
@@ -90,90 +99,190 @@ function SellerProfile() {
                                 className="w-full h-full object-cover"
                             />
                         ) : (
-                            <div className="initials-placeholder text-3xl">{initials}</div>
-                        )}
-                    </div>
-                </div>
-
-                <div className="profile-main-info text-center flex flex-col items-center">
-                    <h1 className="user-full-name text-2xl font-bold">{seller.name}</h1>
-                    <p className="user-email-text text-gray-500 mb-4">{seller.email}</p>
-
-                    {!isCurrentUser && (
-                        <button
-                            onClick={handleContactSeller}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium flex items-center gap-2 shadow-sm transition-all hover:shadow-md active:scale-95"
-                        >
-                            <MessageCircle size={18} />
-                            Contact Seller
-                        </button>
-                    )}
-
-                    <div className="flex justify-center gap-3 mt-6">
-                        <div className="stat-badge-seller">
-                            <span className="count">{items.length}</span>
-                            <span className="label">Items</span>
-                        </div>
-                        {seller.department && (
-                            <div className="stat-badge-seller dept">
-                                <span className="label">{seller.department}</span>
+                            <div className="w-full h-full flex items-center justify-center text-4xl font-extrabold text-gray-300">
+                                {initials}
                             </div>
                         )}
                     </div>
-                </div>
 
-                <div className="profile-details-grid w-full mt-6">
-                    <div className="detail-item full-width bg-gray-50 p-5 rounded-xl border border-gray-100">
-                        <div className="detail-icon bg-white text-blue-600 p-2 rounded-lg shadow-sm">
-                            <UserIcon size={18} />
+                    {/* Info */}
+                    <div className="flex-1 w-full relative">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-6">
+                            <div>
+                                <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-none mb-2">
+                                    {seller.name}
+                                </h1>
+                                <p className="text-lg text-gray-500 font-medium">{seller.email}</p>
+                            </div>
+                            
+                            {!isCurrentUser && (
+                                <button
+                                    onClick={handleContactSeller}
+                                    className="bg-gray-900 hover:bg-black text-white font-bold py-3 px-8 rounded-full transition-all flex items-center gap-2 shadow-sm active:scale-95"
+                                >
+                                    <MessageCircle size={18} /> Message Seller
+                                </button>
+                            )}
                         </div>
-                        <div className="detail-info">
-                            <label className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">About Seller</label>
-                            <p className="bio-text text-gray-600 mt-1 text-sm italic">
-                                "{seller.bio || "This student hasn't added a bio yet."}"
+
+                        {/* Flat Core Stats */}
+                        <div className="flex flex-wrap items-center gap-x-8 gap-y-4 mb-6 pt-2">
+                            <div>
+                                <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">Seller Level</p>
+                                <p className="text-gray-900 font-extrabold text-xl capitalize">{seller.sellerLevel || 'New Seller'}</p>
+                            </div>
+                            <div className="w-px h-10 bg-gray-200 hidden sm:block"></div>
+                            <div>
+                                <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">Rating</p>
+                                <p className="flex items-center gap-1.5 text-gray-900 font-extrabold text-xl">
+                                    <Star size={20} className="fill-current text-yellow-500" /> 
+                                    {seller.averageRating ? seller.averageRating.toFixed(1) : '0.0'}
+                                    <span className="text-sm font-medium text-gray-400 ml-1 mt-0.5">({seller.totalReviews || 0})</span>
+                                </p>
+                            </div>
+                            {seller.department && (
+                                <>
+                                <div className="w-px h-10 bg-gray-200 hidden sm:block"></div>
+                                <div>
+                                    <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">Department</p>
+                                    <p className="text-gray-900 font-extrabold text-xl">{seller.department}</p>
+                                </div>
+                                </>
+                            )}
+                        </div>
+
+                        {/* Minimalist Bio Quote Box */}
+                        <div className="mt-8 max-w-2xl bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                            <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2 flex items-center gap-2">
+                                <UserIcon size={12} /> About Seller
+                            </p>
+                            <p className="text-gray-700 leading-relaxed font-serif text-lg italic">
+                                "{seller.bio || "Hello, I am a student looking to sell and buy items here. I don't have a bio yet!"}"
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="seller-items-section w-full mt-10">
-                    <div className="flex items-center gap-2 mb-6 border-b pb-4">
-                        <Package size={20} className="text-blue-600" />
-                        <h2 className="text-lg font-bold text-gray-800">Available from this Seller</h2>
-                    </div>
+                {/* Standardized Tabs */}
+                <div className="flex items-center gap-8 mb-8 border-b border-gray-100">
+                    <button 
+                        onClick={() => setActiveTab('listings')}
+                        className={`pb-4 text-base font-bold transition-all ${activeTab === 'listings' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                    >
+                        Active Listings ({items.length})
+                    </button>
+                    <button 
+                        onClick={() => setActiveTab('reviews')}
+                        className={`pb-4 text-base font-bold transition-all ${activeTab === 'reviews' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                    >
+                        Buyer Reviews ({reviews.length})
+                    </button>
+                </div>
 
-                    {items.length === 0 ? (
-                        <div className="text-center py-10 bg-gray-50 rounded-xl border border-dashed text-gray-400">
-                            <Package size={40} className="mx-auto mb-2 opacity-20" />
-                            <p>No other items available right now.</p>
-                        </div>
-                    ) : (
-                        <div className="seller-items-grid grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {items.map(item => (
-                                <div
-                                    key={item._id}
-                                    className="seller-item-card flex bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-md transition cursor-pointer group"
-                                    onClick={() => viewItem(item._id)}
-                                >
-                                    <div className="w-24 h-24 flex-shrink-0 overflow-hidden">
-                                        <img
-                                            src={`${BASE_URL}/uploads/${item.image}`}
-                                            alt={item.title}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-                                        />
-                                    </div>
-                                    <div className="p-4 flex flex-col justify-center overflow-hidden flex-1">
-                                        <h3 className="font-semibold text-gray-800 truncate text-sm">{item.title}</h3>
-                                        <p className="text-blue-600 font-bold">₹ {item.price}</p>
-                                        <div className="flex items-center justify-between mt-1">
-                                            <span className="text-[10px] text-gray-400 uppercase tracking-tighter bg-gray-50 px-2 py-0.5 rounded">{item.category}</span>
-                                            <ArrowLeft size={14} className="rotate-180 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition text-blue-500" />
+                {/* Main Sections Tab Content */}
+                <div className="flex flex-col gap-16">
+                    
+                    {/* Active Listings List */}
+                    {activeTab === 'listings' && (
+                    <div className="w-full">
+                        {items.length === 0 ? (
+                            <div className="text-center py-16 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200 text-gray-400">
+                                <Package size={48} className="mx-auto mb-4 opacity-20 text-gray-600" />
+                                <p className="font-semibold text-lg text-gray-500 mb-1">No Listings Actively Available</p>
+                                <p className="text-sm">This seller currently has no items for sale.</p>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {items.map(item => (
+                                    <div
+                                        key={item._id}
+                                        className="flex flex-col group cursor-pointer"
+                                        onClick={() => viewItem(item._id)}
+                                    >
+                                        <div className="w-full aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden mb-4 shadow-sm relative transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
+                                            <img
+                                                src={`${BASE_URL}/uploads/${item.image}`}
+                                                alt={item.title}
+                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                            />
+                                        </div>
+                                        <div className="px-1">
+                                            <div className="flex justify-between items-start mb-1 gap-2">
+                                                <h3 className="font-bold text-gray-900 text-lg leading-tight group-hover:text-blue-600 transition-colors" title={item.title}>
+                                                    {item.title}
+                                                </h3>
+                                                <p className="font-black text-gray-900 text-lg">₹{item.price}</p>
+                                            </div>
+                                            <div className="flex items-center text-xs font-bold uppercase tracking-widest text-gray-400 mt-1 pb-1">
+                                                {item.category}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                     )}
+
+                    {/* Buyer Reviews List */}
+                    {activeTab === 'reviews' && (
+                    <div className="w-full mb-10">
+                        {reviews.length === 0 ? (
+                            <div className="text-center py-16 text-gray-400">
+                                <MessageCircle size={48} className="mx-auto mb-4 opacity-20 text-gray-600" />
+                                <p className="font-semibold text-lg text-gray-500">No reviews found</p>
+                                <p className="text-sm text-gray-400">There are no reviews yet for this seller.</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-10">
+                                {reviews.map((review, i) => (
+                                    <div key={review._id} className={`flex flex-col sm:flex-row gap-6 ${i !== reviews.length - 1 ? 'pb-10 border-b border-gray-100' : ''}`}>
+                                        
+                                        <div className="w-14 h-14 flex-shrink-0">
+                                            {review.reviewerId?.profilePic ? (
+                                                <img src={`${BASE_URL}/uploads/${review.reviewerId.profilePic}`} alt="Reviewer" className="w-full h-full rounded-full object-cover shadow-sm bg-gray-50" />
+                                            ) : (
+                                                <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center text-gray-400 font-black text-xl">
+                                                    {review.reviewerId?.name?.charAt(0) || "U"}
+                                                </div>
+                                            )}
+                                        </div>
+                                        
+                                        <div className="flex-1 max-w-3xl">
+                                            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-2">
+                                                <h4 className="font-black text-gray-900 text-lg">{review.reviewerId?.name || "Unknown Buyer"}</h4>
+                                                <span className="text-xs uppercase tracking-widest font-bold text-gray-400">
+                                                    {new Date(review.createdAt).toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})}
+                                                </span>
+                                            </div>
+                                            
+                                            <div className="flex text-yellow-500 mb-3 gap-0.5">
+                                                {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}
+                                            </div>
+                                            
+                                            <p className="text-gray-800 text-base leading-relaxed mb-4">"{review.comment}"</p>
+
+                                            {/* Minimal Ordered Item Context */}
+                                            {review.orderId && (
+                                                <div className="inline-flex items-center gap-3 pr-4 py-2 border border-gray-100 rounded-full bg-gray-50/50 hover:bg-gray-100 transition-colors w-max overflow-hidden max-w-full">
+                                                    {review.orderId.itemImage ? (
+                                                        <img src={`${BASE_URL}/uploads/${review.orderId.itemImage}`} alt={review.orderId.itemTitle} className="w-8 h-8 rounded-full ml-1 bg-white shadow-sm object-cover" />
+                                                    ) : (
+                                                        <div className="w-8 h-8 rounded-full ml-1 bg-gray-200 flex items-center justify-center text-[10px]">🖼</div>
+                                                    )}
+                                                    <div className="flex flex-col truncate">
+                                                        <span className="text-[10px] text-gray-400 uppercase font-black tracking-widest leading-none mb-0.5">Purchased</span>
+                                                        <span className="text-xs font-bold text-gray-700 leading-none truncate">{review.orderId.itemTitle || "Unknown Item"}</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
                 </div>
             </div>
         </div>

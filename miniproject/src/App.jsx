@@ -9,12 +9,14 @@ import Marketplace from "./pages/marketplace";
 import AddItem from "./pages/additem";
 import Hostels from "./pages/hostel";
 import MyItems from "./pages/myitems";
+import EarningsDashboard from "./pages/EarningsDashboard";
 import ItemDetails from "./pages/ItemDetails";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Success from "./pages/success";
 import Payment from "./pages/payment";
 import Notifications from "./pages/Notifications";
 import SetupProfile from "./pages/SetupProfile";
+import Cart from "./pages/Cart";
 
 import ChatPage from "./pages/ChatPage";
 
@@ -110,8 +112,10 @@ function App() {
             <Route path="add-item" element={<AddItem />} />
             <Route path="hostels" element={<Hostels />} />
             <Route path="hostel-details" element={<HostelDetails />} />
+            <Route path="cart" element={<Cart />} />
             <Route path="my-items" element={<MyItems />} />
             <Route path="my-orders" element={<MyOrders />} />
+            <Route path="earnings" element={<EarningsDashboard />} />
             <Route path="order-details/:id" element={<OrderDetails />} />
             <Route path="item-details" element={<ItemDetails />} />
             <Route path="payment" element={<Payment />} />

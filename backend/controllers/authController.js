@@ -6,6 +6,11 @@ const User = require("../models/User");
 exports.registerUser = async (req, res) => {
   try {
     const { email, password, name } = req.body;
+
+    if (!email.endsWith("@cev.ac.in")) {
+      return res.status(400).json({ error: "Registration restricted to @cev.ac.in emails only" });
+    }
+
     const profilePic = req.file ? req.file.filename : null;
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -140,6 +145,10 @@ exports.getPublicProfile = async (req, res) => {
         profilePic: user.profilePic,
         department: user.department,
         bio: user.bio,
+        sellerLevel: user.sellerLevel,
+        averageRating: user.averageRating,
+        totalReviews: user.totalReviews,
+        completedSales: user.completedSales,
       }
     });
   } catch (error) {
@@ -270,5 +279,32 @@ exports.deleteUser = async (req, res) => {
   } catch (error) {
     console.error("Delete user error:", error);
     res.status(500).json({ error: "Failed to delete user" });
+  }
+};
+
+// 🔹 Fetch My Earnings Dashboard Data
+exports.getMyEarnings = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Fetch all delivered orders where user is the seller
+    const Order = require("../models/Order");
+    const deliveredSales = await Order.find({ sellerId: req.user.id, status: "Delivered" })
+      .populate("itemId", "title image price")
+      .populate("buyerId", "name profilePic")
+      .sort({ updatedAt: -1 });
+
+    res.json({
+      sellerLevel: user.sellerLevel,
+      totalEarnings: user.totalEarnings,
+      completedSales: user.completedSales,
+      averageRating: user.averageRating,
+      totalReviews: user.totalReviews,
+      history: deliveredSales
+    });
+  } catch (error) {
+    console.error("Get my earnings error:", error);
+    res.status(500).json({ error: "Failed to fetch earnings data" });
   }
 };

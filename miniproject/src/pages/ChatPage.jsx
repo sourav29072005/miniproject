@@ -163,6 +163,22 @@ function ChatPage() {
     }
   };
 
+  // 7. Delete Chat Handler
+  const handleDeleteChat = async () => {
+    if (!window.confirm("Are you sure you want to permanently delete this entire conversation?")) return;
+    try {
+      await api.delete(`chat/${activeChat._id}`);
+      setMessages([]);
+      
+      // Remove conversation from sidebar
+      setConversations(prev => prev.filter(c => c._id !== activeChat._id));
+      setActiveChat(null);
+    } catch (err) {
+      console.error("Failed to delete chat", err);
+      alert("Failed to delete conversation.");
+    }
+  };
+
   return (
     <div className="chat-container">
       {/* SIDEBAR - LIST OF CONVERSATIONS */}
@@ -230,14 +246,22 @@ function ChatPage() {
               </h3>
             </div>
             
-            <div className="ml-auto">
+            <div className="ml-auto flex gap-2">
               <button 
                 onClick={handleClearChat}
-                className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded-full transition-colors flex items-center justify-center cursor-pointer"
-                title="Clear Chat"
+                className="text-orange-500 hover:text-orange-700 bg-orange-50 hover:bg-orange-100 p-2 rounded-full transition-colors flex items-center justify-center cursor-pointer"
+                title="Clear Chat Messages"
                 type="button"
               >
                 <Trash2 size={20} />
+              </button>
+              <button 
+                onClick={handleDeleteChat}
+                className="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-full border border-red-200 transition-colors flex items-center justify-center cursor-pointer font-medium text-sm"
+                title="Delete Entire Conversation"
+                type="button"
+              >
+                Delete Chat
               </button>
             </div>
           </div>

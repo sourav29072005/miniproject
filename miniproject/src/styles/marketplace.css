@@ -145,6 +145,13 @@
   gap: 25px;
 }
 
+@media (max-width: 640px) {
+  .items-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+  }
+}
+
 /* Card */
 .item-card {
   background-color: white;
@@ -258,20 +265,25 @@
 
 .buy-btn-small {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: none;
-  border-radius: 10px;
-  background: #0b4db7;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
   color: white;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin-top: auto;
+  box-shadow: 0 6px 16px -4px rgba(79, 70, 229, 0.3);
 }
 
 .buy-btn-small:hover {
-  background: #0b2a90;
-  box-shadow: 0 4px 12px rgba(11, 77, 183, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -4px rgba(79, 70, 229, 0.5);
+}
+
+.buy-btn-small:active {
+  transform: translateY(0);
 }
 
 /* Card wishlist heart button */

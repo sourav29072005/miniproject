@@ -60,6 +60,13 @@
   gap: 16px;
 }
 
+@media (max-width: 640px) {
+  .items-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
 /* ===== ITEM CARD ===== */
 .item-card {
   background: white;
@@ -243,17 +250,23 @@
   margin-bottom: 2px;
 }
 
-/* ===== ACTION BUTTONS ===== */
+/* ===== ACTION BUTTONS SETTINGS ===== */
 .item-actions {
   padding: 12px 16px;
   border-top: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.actions-row {
   display: flex;
   gap: 8px;
 }
 
 .action-btn {
   flex: 1;
-  padding: 9px 0;
+  padding: 10px 0;
   border: none;
   border-radius: 10px;
   font-size: 13px;
@@ -267,34 +280,99 @@
   gap: 5px;
 }
 
-.btn-edit {
-  background: #eff6ff;
-  color: #0b4db7;
-  border: 1px solid #bfdbfe;
+.action-btn:hover {
+  transform: translateY(-1px);
 }
 
-.btn-edit:hover {
-  background: #dbeafe;
+.action-btn.full-width {
+  flex: 1 1 100%;
 }
+
+.management-actions .action-btn {
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+}
+.management-actions .action-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.management-actions .btn-delete:hover {
+  background: #fef2f2;
+  color: #e11d48;
+  border-color: #fecdd3;
+}
+
+.order-actions {
+  flex-wrap: wrap;
+}
+
+.btn-message {
+  background: #e0f2fe;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
+}
+.btn-message:hover { background: #bae6fd; }
+
+.btn-schedule {
+  background: #2563eb;
+  color: white;
+  border: 1px solid #1d4ed8;
+}
+.btn-schedule:hover { background: #1d4ed8; }
 
 .btn-handover {
-  background: #dcfce7;
-  color: #16a34a;
-  border: 1px solid #bbf7d0;
+  background: #16a34a;
+  color: white;
+  border: 1px solid #15803d;
 }
+.btn-handover:hover { background: #15803d; }
 
-.btn-handover:hover {
-  background: #bbf7d0;
+/* Handover Box Details */
+.handover-box {
+  margin-top: 12px;
+  background-color: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 13px;
 }
-
-.btn-delete {
-  background: #fff1f2;
-  color: #e11d48;
-  border: 1px solid #fecdd3;
+.handover-header {
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-
-.btn-delete:hover {
-  background: #ffe4e6;
+.handover-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  color: #64748b;
+}
+.handover-row strong {
+  color: #1e293b;
+  text-align: right;
+  max-width: 60%;
+}
+.handover-warning-upcoming {
+  color: #b45309;
+  background-color: #fef3c7;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 11px;
+  margin-top: 6px;
+}
+.handover-warning-overdue {
+  color: #b91c1c;
+  background-color: #fee2e2;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 11px;
+  margin-top: 6px;
 }
 
 /* ===== EMPTY STATE ===== */

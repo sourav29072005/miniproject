@@ -6,7 +6,8 @@ const {
     getMySales,
     confirmReceipt,
     confirmHandedOver,
-    cancelOrder
+    cancelOrder,
+    scheduleHandover
 } = require("../controllers/orderController");
 
 // The middleware is actually in the middleware folder (or we need to find it)
@@ -20,5 +21,6 @@ router.get("/my-sales", authMiddleware, getMySales);
 router.put("/:id/confirm-receipt", authMiddleware, confirmReceipt);
 router.put("/:id/confirm-handed-over", authMiddleware, confirmHandedOver);
 router.put("/:id/cancel", authMiddleware, cancelOrder);
+router.put("/:id/schedule", authMiddleware, scheduleHandover);
 
 module.exports = router;

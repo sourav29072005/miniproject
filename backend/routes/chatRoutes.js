@@ -8,5 +8,6 @@ router.get("/unread-count", auth, chatController.getUnreadCount);
 router.get("/:conversationId/messages", auth, chatController.getMessages);
 router.post("/start", auth, chatController.startConversation);
 router.delete("/:conversationId/clear", auth, chatController.clearChat);
+router.delete("/:conversationId", auth, chatController.deleteConversation);
 
 module.exports = router;
