@@ -2,11 +2,35 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
     {
+        // Legacy single-item structure (fallback for old data)
         itemId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Item",
-            required: true,
         },
+        price: {
+            type: Number,
+        },
+        itemTitle: {
+            type: String,
+        },
+        itemImage: {
+            type: String,
+        },
+
+        // Multi-item structure
+        items: [
+            {
+                itemId: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
+                itemTitle: String,
+                itemImage: String,
+                price: Number
+            }
+        ],
+        totalPrice: {
+            type: Number,
+            default: 0
+        },
+
         buyerId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
@@ -17,20 +41,10 @@ const orderSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
-        price: {
-            type: Number,
-            required: true,
-        },
         status: {
             type: String,
             enum: ["Cancelled", "Pending", "Pending Buyer Confirmation", "Pending Seller Confirmation", "Delivered"],
             default: "Pending",
-        },
-        itemTitle: {
-            type: String, // Store snapshot in case item is deleted
-        },
-        itemImage: {
-            type: String, // Store snapshot in case item is deleted
         },
         buyerConfirmed: {
             type: Boolean,
@@ -51,6 +65,10 @@ const orderSchema = new mongoose.Schema(
         },
         handoverTime: {
             type: String,
+        },
+        hasReviewed: {
+            type: Boolean,
+            default: false,
         },
     },
     { timestamps: true }

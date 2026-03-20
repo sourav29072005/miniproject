@@ -5,59 +5,81 @@ const Notification = require("../models/Notification");
 // 🔹 CREATE ORDER
 exports.createOrder = async (req, res) => {
     try {
-        const { itemId, price, handoverLocation, customLocation } = req.body;
+        const { items, handoverLocation, customLocation } = req.body;
+        // `items` is an array of objects: { itemId, price }
+        // For backwards compatibility with single item checkout
+        const checkoutItems = items || [{ itemId: req.body.itemId, price: req.body.price }];
+        
         const buyerId = req.user.id;
-
-        console.log(`Creating order for Item: ${itemId}, Buyer: ${buyerId}`);
-
-        // Get item to ensure it exists and get sellerId/title
-        const item = await Item.findById(itemId);
-        if (!item) {
-            console.error(`Item not found: ${itemId}`);
-            return res.status(404).json({ error: "Item not found" });
-        }
-
-        const sellerId = item.user;
-        if (!sellerId) {
-            console.error(`Seller not found for item: ${itemId}`);
-            return res.status(400).json({ error: "Seller information missing for this item" });
-        }
-
-        // Prevent self-purchase
+        
+        // We assume all items in a single checkout belong to the same seller!
+        const firstItem = await Item.findById(checkoutItems[0].itemId);
+        if (!firstItem) return res.status(404).json({ error: "Item not found" });
+        
+        const sellerId = firstItem.user;
+        
         if (buyerId === sellerId.toString()) {
             return res.status(403).json({ error: "You cannot buy your own item." });
         }
+        
+        // Process all items
+        const orderItems = [];
+        let totalPrice = 0;
+        let mainTitle = firstItem.title;
+
+        for (const reqItem of checkoutItems) {
+            const dbItem = await Item.findById(reqItem.itemId);
+            if (!dbItem || dbItem.status === "sold" || dbItem.status === "delivered") continue;
+            
+            // Mark item as sold
+            dbItem.status = "sold";
+            await dbItem.save();
+            
+            const itemPrice = reqItem.price || dbItem.price;
+            totalPrice += itemPrice;
+            
+            orderItems.push({
+                itemId: dbItem._id,
+                itemTitle: dbItem.title,
+                itemImage: dbItem.images && dbItem.images.length > 0 ? dbItem.images[0] : dbItem.image,
+                price: itemPrice
+            });
+        }
+        
+        if (orderItems.length === 0) {
+            return res.status(400).json({ error: "No valid items to checkout" });
+        }
 
         const newOrder = await Order.create({
-            itemId,
+            items: orderItems,
+            totalPrice,
             buyerId,
             sellerId,
-            price: price || item.price,
             status: "Pending",
-            itemTitle: item.title,
-            itemImage: item.images && item.images.length > 0 ? item.images[0] : item.image,
             handoverLocation,
             customLocation
         });
 
-        // Mark item as sold
-        item.status = "sold";
-        await item.save();
-
-        console.log(`Order created: ${newOrder._id}. Creating notification for seller: ${sellerId}`);
+        // Remove these items from the user's cart
+        const User = require("../models/User");
+        await User.findByIdAndUpdate(buyerId, {
+            $pull: { cartItems: { $in: orderItems.map(i => i.itemId) } }
+        });
 
         // Create notification for seller
         try {
+            const notifMessage = orderItems.length > 1 
+                ? `${orderItems.length} of your items have been ordered together!`
+                : `Your item "${mainTitle}" has been ordered!`;
+                
             await Notification.create({
                 recipient: sellerId,
-                message: `Your item "${item.title}" has been ordered!`,
+                message: notifMessage,
                 type: "Order Placed",
                 orderId: newOrder._id,
             });
-            console.log("Notification created successfully");
         } catch (notifError) {
             console.error("Failed to create notification:", notifError);
-            // We don't return error here because the order was already created successfully
         }
 
         res.status(201).json(newOrder);
@@ -101,7 +123,28 @@ exports.confirmReceipt = async (req, res) => {
 
         if (order.sellerConfirmed) {
             order.status = "Delivered";
-            await Item.findByIdAndUpdate(order.itemId, { status: "delivered" });
+            
+            // Update items to delivered
+            if (order.items && order.items.length > 0) {
+                for (const i of order.items) {
+                    await Item.findByIdAndUpdate(i.itemId, { status: "delivered" });
+                }
+            } else if (order.itemId) {
+                await Item.findByIdAndUpdate(order.itemId, { status: "delivered" });
+            }
+            
+            // Update Seller Earnings and Level Progression
+            const User = require("../models/User");
+            const seller = await User.findById(order.sellerId);
+            if (seller) {
+                const totalOrderValue = order.totalPrice || order.price || 0;
+                seller.totalEarnings += totalOrderValue;
+                seller.completedSales += 1;
+                await seller.save();
+                
+                const { recalculateSellerLevel } = require("../utils/sellerProgression");
+                await recalculateSellerLevel(seller._id);
+            }
         } else {
             order.status = "Pending Seller Confirmation";
         }
@@ -125,18 +168,42 @@ exports.confirmHandedOver = async (req, res) => {
         }
 
         // Check 1-hour time constraint - seller can only confirm after 1 hour from order creation
-        const oneHourInMs = 1 * 60 * 60 * 1000;
-        const orderCreationTime = new Date(order.createdAt).getTime();
-        if (Date.now() - orderCreationTime < oneHourInMs) {
-            const timeRemaining = Math.ceil((oneHourInMs - (Date.now() - orderCreationTime)) / 1000 / 60);
-            return res.status(400).json({ error: `You can only confirm handover after 1 hour. Please wait ${timeRemaining} more minutes.` });
+        // UNLESS the buyer has already confirmed receipt, which bypasses the timer.
+        if (!order.buyerConfirmed) {
+            const oneHourInMs = 1 * 60 * 60 * 1000;
+            const orderCreationTime = new Date(order.createdAt).getTime();
+            if (Date.now() - orderCreationTime < oneHourInMs) {
+                const timeRemaining = Math.ceil((oneHourInMs - (Date.now() - orderCreationTime)) / 1000 / 60);
+                return res.status(400).json({ error: `You can only confirm handover after 1 hour. Please wait ${timeRemaining} more minutes.` });
+            }
         }
 
         order.sellerConfirmed = true;
 
         if (order.buyerConfirmed) {
             order.status = "Delivered";
-            await Item.findByIdAndUpdate(order.itemId, { status: "delivered" });
+            
+            // Update items to delivered
+            if (order.items && order.items.length > 0) {
+                for (const i of order.items) {
+                    await Item.findByIdAndUpdate(i.itemId, { status: "delivered" });
+                }
+            } else if (order.itemId) {
+                await Item.findByIdAndUpdate(order.itemId, { status: "delivered" });
+            }
+
+            // Update Seller Earnings and Level Progression
+            const User = require("../models/User");
+            const seller = await User.findById(order.sellerId);
+            if (seller) {
+                const totalOrderValue = order.totalPrice || order.price || 0;
+                seller.totalEarnings += totalOrderValue;
+                seller.completedSales += 1;
+                await seller.save();
+                
+                const { recalculateSellerLevel } = require("../utils/sellerProgression");
+                await recalculateSellerLevel(seller._id);
+            }
         } else {
             order.status = "Pending Buyer Confirmation";
         }
@@ -174,23 +241,25 @@ exports.cancelOrder = async (req, res) => {
         order.status = "Cancelled";
         await order.save();
 
-        const item = await Item.findByIdAndUpdate(order.itemId, { status: "available" }, { new: true });
+        if (order.items && order.items.length > 0) {
+            for (const i of order.items) {
+                await Item.findByIdAndUpdate(i.itemId, { status: "available" });
+            }
+        } else if (order.itemId) {
+            await Item.findByIdAndUpdate(order.itemId, { status: "available" });
+        }
 
-        console.log(`Order ${order._id} cancelled. Restoring item ${order.itemId}.`);
+        console.log(`Order ${order._id} cancelled.`);
 
         // Create notification for seller
         try {
-            if (item) {
                 await Notification.create({
                     recipient: order.sellerId,
-                    message: `Order for your item "${item.title}" has been cancelled.`,
+                    message: `An order for your items was cancelled.`,
                     type: "Order Cancelled",
                     orderId: order._id,
                 });
                 console.log("Cancellation notification created for seller:", order.sellerId);
-            } else {
-                console.warn("Item not found during cancellation notification creation");
-            }
         } catch (notifError) {
             console.error("Failed to create cancellation notification:", notifError);
         }

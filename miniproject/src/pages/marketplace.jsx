@@ -3,6 +3,7 @@ import api, { BASE_URL } from "../api";
 import "../styles/marketplace.css";
 import { FaFilter, FaHeart, FaRegHeart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 function Marketplace() {
   const [items, setItems] = useState([]);
@@ -70,6 +71,19 @@ function Marketplace() {
     setCategory("");
     setMinPrice("");
     setMaxPrice("");
+  };
+
+  const { addToCart } = useCart();
+  const [addingIds, setAddingIds] = useState({});
+
+  const handleAddToCart = async (e, itemId) => {
+    e.stopPropagation();
+    setAddingIds(prev => ({...prev, [itemId]: true}));
+    const res = await addToCart(itemId);
+    setAddingIds(prev => ({...prev, [itemId]: false}));
+    if (!res.success) {
+      alert(res.error);
+    }
   };
 
   const viewItem = (item) => {
@@ -260,12 +274,22 @@ function Marketplace() {
                       </div>
                     )}
                   </div>
-                  <span className="seller-name-label">{item.user?.name || "Seller"}</span>
+                  <div style={{display: 'flex', flexDirection: 'column'}}>
+                    <span className="seller-name-label" style={{fontWeight: 600}}>{item.user?.name || "Seller"}</span>
+                    <span style={{fontSize: '11px', color: '#64748b'}}>
+                      <span style={{color: '#f59e0b', fontWeight: 'bold'}}>★ {item.user?.averageRating || 0}</span> • {item.user?.sellerLevel || "New Seller"}
+                    </span>
+                  </div>
                 </div>
 
-                <button className="buy-btn-small" onClick={() => viewItem(item)}>
-                  View Details
-                </button>
+                <div style={{display: 'flex', gap: '8px', marginTop: '10px'}}>
+                  <button className="buy-btn-small" style={{flex: 1, backgroundColor: "#f3f4f6", color: "#374151"}} onClick={(e) => handleAddToCart(e, item._id)} disabled={addingIds[item._id]}>
+                    {addingIds[item._id] ? "Adding..." : "🛒 Cart"}
+                  </button>
+                  <button className="buy-btn-small" style={{flex: 1}} onClick={() => viewItem(item)}>
+                    View Details
+                  </button>
+                </div>
               </div>
             </div>
           ))}
