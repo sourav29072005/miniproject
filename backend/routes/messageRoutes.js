@@ -15,5 +15,7 @@ router.delete("/delete-all/all", auth, messageController.deleteAllMessages);
 
 // Admin routes
 router.post("/send", auth, admin, messageController.sendMessage);
+router.get("/admin/user/:userId", auth, admin, messageController.getUserMessageHistory);
+router.get("/admin/all", auth, admin, messageController.getAllMessages);
 
 module.exports = router;

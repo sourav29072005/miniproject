@@ -34,32 +34,18 @@ function HostelDetails() {
     fetchHostelDetails();
   }, []);
 
-  // Handle body overflow and hide sidebar when lightbox opens/closes
+  // Handle body overflow when lightbox opens/closes
   useEffect(() => {
     if (lightboxImg) {
       document.body.style.overflow = "hidden";
       document.body.classList.add("lightbox-open");
-      // Find and hide the sidebar wrapper (the fixed/relative positioned div in DashboardLayout)
-      const sidebarWrapper = document.querySelector('[class*="transition-transform"]');
-      if (sidebarWrapper) {
-        sidebarWrapper.style.display = "none";
-      }
     } else {
       document.body.style.overflow = "auto";
       document.body.classList.remove("lightbox-open");
-      // Show the sidebar wrapper again
-      const sidebarWrapper = document.querySelector('[class*="transition-transform"]');
-      if (sidebarWrapper) {
-        sidebarWrapper.style.display = "";
-      }
     }
     return () => {
       document.body.style.overflow = "auto";
       document.body.classList.remove("lightbox-open");
-      const sidebarWrapper = document.querySelector('[class*="transition-transform"]');
-      if (sidebarWrapper) {
-        sidebarWrapper.style.display = "";
-      }
     };
   }, [lightboxImg]);
 
@@ -142,6 +128,16 @@ function HostelDetails() {
             <div>
               <h2>{hostel.name}</h2>
               <p className="hd-location">📍 {hostel.location}</p>
+              {hostel.locationLink && (
+                <a
+                  href={hostel.locationLink.startsWith('http') ? hostel.locationLink : `https://${hostel.locationLink}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'inline-block', marginTop: '5px', fontSize: '0.9rem', color: '#0066cc', textDecoration: 'none', fontWeight: '500' }}
+                >
+                  🗺️ View on Google Maps
+                </a>
+              )}
             </div>
             <span
               className={
@@ -194,6 +190,16 @@ function HostelDetails() {
                 <div className="hd-quick-item-value">{hostel.contact}</div>
               </div>
             </div>
+
+            {hostel.distanceFromCollege && (
+              <div className="hd-quick-item">
+                <div className="hd-quick-item-icon">🎓</div>
+                <div className="hd-quick-item-content">
+                  <div className="hd-quick-item-label">Dist. to College</div>
+                  <div className="hd-quick-item-value">{hostel.distanceFromCollege}</div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Address */}

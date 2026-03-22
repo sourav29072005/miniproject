@@ -30,6 +30,8 @@ function AdminHostels() {
   const [roomType, setRoomType] = useState("");
   const [capacity, setCapacity] = useState("");
   const [availableRooms, setAvailableRooms] = useState("");
+  const [distanceFromCollege, setDistanceFromCollege] = useState("");
+  const [locationLink, setLocationLink] = useState("");
   const [facilities, setFacilities] = useState([]);
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("available");
@@ -72,6 +74,8 @@ function AdminHostels() {
     setRoomType("");
     setCapacity("");
     setAvailableRooms("");
+    setDistanceFromCollege("");
+    setLocationLink("");
     setFacilities([]);
     setDescription("");
     setStatus("available");
@@ -131,6 +135,8 @@ function AdminHostels() {
     setRoomType(hostel.roomType || "");
     setCapacity(hostel.capacity || "");
     setAvailableRooms(hostel.availableRooms || "");
+    setDistanceFromCollege(hostel.distanceFromCollege || "");
+    setLocationLink(hostel.locationLink || "");
     setFacilities(hostel.facilities || []);
     setDescription(hostel.description || "");
     setStatus(hostel.status || "available");
@@ -175,6 +181,8 @@ function AdminHostels() {
       roomType: roomType.trim(),
       capacity: capacity.trim(),
       availableRooms: availableRooms.trim(),
+      distanceFromCollege: distanceFromCollege.trim(),
+      locationLink: locationLink.trim(),
       facilities,
       description: description.trim(),
       images,
@@ -277,6 +285,24 @@ function AdminHostels() {
                 value={availableRooms}
                 onChange={(e) => setAvailableRooms(e.target.value)}
                 placeholder="e.g., 2 rooms (4 beds)"
+              />
+            </div>
+
+            <div className="ah-field">
+              <label>Distance from College</label>
+              <input
+                value={distanceFromCollege}
+                onChange={(e) => setDistanceFromCollege(e.target.value)}
+                placeholder="e.g., 2.5 km"
+              />
+            </div>
+
+            <div className="ah-field">
+              <label>Location Link (Google Maps)</label>
+              <input
+                value={locationLink}
+                onChange={(e) => setLocationLink(e.target.value)}
+                placeholder="https://maps.google.com/..."
               />
             </div>
 

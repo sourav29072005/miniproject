@@ -65,12 +65,12 @@ function Cart() {
 
   return (
     <div className="cart-page-bg">
-      <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
+      <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-10 gap-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 md:mb-8 gap-3">
           <div>
-            <h1 className="text-3xl md:text-4xl cart-header-title mb-2">Shopping Cart</h1>
-            <p className="text-slate-500 text-base md:text-lg">
+            <h1 className="text-2xl md:text-3xl cart-header-title mb-1">Shopping Cart</h1>
+            <p className="text-slate-500 text-sm md:text-base">
               You have <span className="font-semibold text-slate-700">{cartItems.length} items</span> waiting for checkout.
             </p>
           </div>
@@ -83,38 +83,38 @@ function Cart() {
         </div>
 
         {/* Global Security Badge */}
-        <div className="flex items-center gap-2 mb-8 bg-emerald-50 text-emerald-700 px-4 py-3 rounded-xl border border-emerald-100 max-w-fit">
-          <ShieldCheck size={20} />
-          <span className="text-sm font-medium">Safe & Secure grouped checkouts. Your money is protected.</span>
+        <div className="flex items-center gap-1.5 mb-6 bg-emerald-50 text-emerald-700 px-3 py-2 rounded-lg border border-emerald-100 max-w-fit">
+          <ShieldCheck size={18} />
+          <span className="text-xs font-medium">Safe & Secure grouped checkouts. Your money is protected.</span>
         </div>
 
         {/* Seller Groups Grid */}
-        <div className="grid gap-10">
+        <div className="grid gap-6">
           {Object.values(sellerGroups).map((group, index) => (
             <div key={index} className="seller-group-card">
               
               {/* Premium Seller Header */}
               <div className="seller-header-banner flex-col sm:flex-row items-start sm:items-center gap-4">
                 <div className="flex items-center gap-3 md:gap-4 w-full sm:w-auto">
-                  <div className="w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-full shadow-md border-2 border-white overflow-hidden bg-white">
+                  <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-full shadow-md border-2 border-white overflow-hidden bg-white">
                     {group.seller.profilePic ? (
                       <img src={`${BASE_URL}/uploads/${group.seller.profilePic}`} alt="" className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">
-                        <User size={24} />
+                        <User size={20} />
                       </div>
                     )}
                   </div>
                   <div className="min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-400">Seller Package</span>
+                    <div className="flex items-center gap-1 mb-0.5">
+                      <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-slate-400">Seller Package</span>
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold text-slate-800 truncate">{group.seller.name || "Seller Name"}</h3>
+                    <h3 className="text-base md:text-lg font-bold text-slate-800 truncate">{group.seller.name || "Seller Name"}</h3>
                   </div>
                 </div>
                 
                 {/* Visual Connector / Badge */}
-                <div className="inline-flex sm:flex items-center gap-2 text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 font-semibold text-xs md:text-sm mt-3 sm:mt-0">
+                <div className="inline-flex sm:flex items-center gap-1.5 text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100 font-semibold text-[11px] md:text-xs mt-3 sm:mt-0">
                   {group.items.length} {group.items.length === 1 ? 'Item' : 'Items'} Group
                 </div>
               </div>
@@ -122,7 +122,7 @@ function Cart() {
               {/* Items List */}
               <div className="flex flex-col">
                 {group.items.map((item, i) => (
-                  <div key={item._id} className="cart-item-row gap-6">
+                  <div key={item._id} className="cart-item-row gap-4 md:gap-5">
                     <div className="item-img-container cursor-pointer" onClick={() => {
                         localStorage.setItem("selectedItemId", item._id);
                         navigate('/item-details');
@@ -139,21 +139,21 @@ function Cart() {
                     
                     <div className="flex-1 flex flex-col justify-between py-1">
                       <div>
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start md:gap-4 mb-1">
-                          <h3 className="text-base sm:text-lg font-bold text-slate-800 line-clamp-2 hover:text-indigo-600 transition-colors cursor-pointer pr-2"
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start md:gap-3 mb-1">
+                          <h3 className="text-sm sm:text-base font-bold text-slate-800 line-clamp-2 hover:text-indigo-600 transition-colors cursor-pointer pr-2"
                               onClick={() => {
                                 localStorage.setItem("selectedItemId", item._id);
                                 navigate('/item-details');
                               }}>
                             {item.title}
                           </h3>
-                          <p className="text-lg sm:text-xl font-extrabold text-slate-900 whitespace-nowrap mt-1 sm:mt-0">₹ {item.price}</p>
+                          <p className="text-base sm:text-lg font-extrabold text-slate-900 whitespace-nowrap mt-1 sm:mt-0">₹ {item.price}</p>
                         </div>
-                        <p className="text-xs sm:text-sm text-slate-500 line-clamp-1 md:line-clamp-2">{item.description || "No description provided."}</p>
+                        <p className="text-[11px] sm:text-xs text-slate-500 line-clamp-1 md:line-clamp-2 leading-relaxed">{item.description || "No description provided."}</p>
                       </div>
                       
-                      <div className="flex items-end justify-between mt-4">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-600 text-xs font-bold border border-emerald-100">
+                      <div className="flex items-end justify-between mt-3">
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded border border-emerald-100 bg-emerald-50 text-emerald-600 text-[11px] font-bold">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                           In Stock
                         </span>
@@ -172,11 +172,11 @@ function Cart() {
               </div>
 
               {/* Checkout Action Bar */}
-              <div className="checkout-action-bar flex-col sm:flex-row gap-4 items-start sm:items-center">
+              <div className="checkout-action-bar flex-col sm:flex-row gap-3 items-start sm:items-center">
                 <div className="flex flex-col w-full sm:w-auto">
-                  <span className="text-xs md:text-sm font-semibold text-slate-500 mb-1">Package Subtotal</span>
+                  <span className="text-[11px] md:text-xs font-semibold text-slate-500 mb-0.5">Package Subtotal</span>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl md:text-3xl font-extrabold text-slate-900">₹ {group.total.toLocaleString()}</span>
+                    <span className="text-xl md:text-2xl font-extrabold text-slate-900">₹ {group.total.toLocaleString()}</span>
                   </div>
                 </div>
                 
@@ -184,7 +184,7 @@ function Cart() {
                   onClick={() => checkoutGroup(group)}
                   className="premium-checkout-btn w-full sm:w-auto justify-center"
                 >
-                  Checkout {group.items.length} {group.items.length === 1 ? 'Item' : 'Items'} <ArrowRight size={18} />
+                  Checkout {group.items.length} {group.items.length === 1 ? 'Item' : 'Items'} <ArrowRight size={16} />
                 </button>
               </div>
             </div>

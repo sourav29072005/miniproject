@@ -78,9 +78,9 @@ function Marketplace() {
 
   const handleAddToCart = async (e, itemId) => {
     e.stopPropagation();
-    setAddingIds(prev => ({...prev, [itemId]: true}));
+    setAddingIds(prev => ({ ...prev, [itemId]: true }));
     const res = await addToCart(itemId);
-    setAddingIds(prev => ({...prev, [itemId]: false}));
+    setAddingIds(prev => ({ ...prev, [itemId]: false }));
     if (!res.success) {
       alert(res.error);
     }
@@ -274,19 +274,19 @@ function Marketplace() {
                       </div>
                     )}
                   </div>
-                  <div style={{display: 'flex', flexDirection: 'column'}}>
-                    <span className="seller-name-label" style={{fontWeight: 600}}>{item.user?.name || "Seller"}</span>
-                    <span style={{fontSize: '11px', color: '#64748b'}}>
-                      <span style={{color: '#f59e0b', fontWeight: 'bold'}}>★ {item.user?.averageRating || 0}</span> • {item.user?.sellerLevel || "New Seller"}
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span className="seller-name-label" style={{ fontWeight: 600 }}>{item.user?.name || "Seller"}</span>
+                    <span style={{ fontSize: '11px', color: '#64748b' }}>
+                      <span style={{ color: '#f59e0b', fontWeight: 'bold' }}>★ {item.user?.averageRating || 0}</span> • {item.user?.sellerLevel || "New Seller"}
                     </span>
                   </div>
                 </div>
 
-                <div style={{display: 'flex', gap: '8px', marginTop: '10px'}}>
-                  <button className="buy-btn-small" style={{flex: 1, backgroundColor: "#f3f4f6", color: "#374151"}} onClick={(e) => handleAddToCart(e, item._id)} disabled={addingIds[item._id]}>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                  <button className="buy-btn-small" style={{ flex: 1, backgroundColor: "#f3f4f6", color: "#ffffffff" }} onClick={(e) => handleAddToCart(e, item._id)} disabled={addingIds[item._id]}>
                     {addingIds[item._id] ? "Adding..." : "🛒 Cart"}
                   </button>
-                  <button className="buy-btn-small" style={{flex: 1}} onClick={() => viewItem(item)}>
+                  <button className="buy-btn-small" style={{ flex: 1 }} onClick={() => viewItem(item)}>
                     View Details
                   </button>
                 </div>

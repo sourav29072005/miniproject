@@ -35,6 +35,16 @@ function Admin() {
           <h2>Manage Users</h2>
           <p>View User Profiles and Products</p>
         </div>
+
+        <div className="admin-card" onClick={() => navigate("/admin/reports")}>
+          <h2>Manage Reports</h2>
+          <p>Review User and Item Flags</p>
+        </div>
+
+        <div className="admin-card" onClick={() => navigate("/admin/messages")}>
+          <h2>Manage Messages</h2>
+          <p>View and Search System Messages</p>
+        </div>
       </div>
     </div>
   );

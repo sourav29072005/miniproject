@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api, { BASE_URL } from "../api";
-import { ArrowLeft, User as UserIcon, Package, MessageCircle, Star } from "lucide-react";
+import { ArrowLeft, User as UserIcon, Package, MessageCircle, Star, Flag } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import ReportModal from "../components/ReportModal";
 import "./sellerprofile.css";
 
 function SellerProfile() {
@@ -13,6 +14,7 @@ function SellerProfile() {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("listings");
+    const [showReportModal, setShowReportModal] = useState(false);
     const { user } = useAuth();
     
     // Safety check - if this is the currently logged in user, don't show the contact button
@@ -116,12 +118,21 @@ function SellerProfile() {
                             </div>
                             
                             {!isCurrentUser && (
-                                <button
-                                    onClick={handleContactSeller}
-                                    className="bg-gray-900 hover:bg-black text-white font-bold py-3 px-8 rounded-full transition-all flex items-center gap-2 shadow-sm active:scale-95"
-                                >
-                                    <MessageCircle size={18} /> Message Seller
-                                </button>
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={handleContactSeller}
+                                        className="bg-gray-900 hover:bg-black text-white font-bold py-3 px-8 rounded-full transition-all flex items-center gap-2 shadow-sm active:scale-95"
+                                    >
+                                        <MessageCircle size={18} /> Message Seller
+                                    </button>
+                                    <button 
+                                        onClick={() => setShowReportModal(true)}
+                                        className="text-gray-400 hover:text-red-500 transition-colors p-3 rounded-full hover:bg-red-50"
+                                        title="Report this user"
+                                    >
+                                        <Flag size={20} />
+                                    </button>
+                                </div>
                             )}
                         </div>
 
@@ -285,6 +296,15 @@ function SellerProfile() {
                 )}
                 </div>
             </div>
+
+            {seller && (
+                <ReportModal
+                    isOpen={showReportModal}
+                    onClose={() => setShowReportModal(false)}
+                    entityId={seller._id}
+                    entityModel="User"
+                />
+            )}
         </div>
     );
 }

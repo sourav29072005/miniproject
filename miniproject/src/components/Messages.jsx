@@ -68,7 +68,7 @@ function Messages({ isOpen, onClose }) {
       {/* Messages Panel */}
       <div className={`messages-panel ${isOpen ? "active" : ""}`}>
         <div className="messages-header">
-          <h3>Messages</h3>
+          <h3>System Messages</h3>
           {unreadCount > 0 && (
             <button className="msg-mark-all" onClick={markAllAsRead}>
               Mark all as read

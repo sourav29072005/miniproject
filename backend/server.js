@@ -30,7 +30,7 @@ app.use("/api/messages", require("./routes/messageRoutes"));
 app.use("/api/chat", require("./routes/chatRoutes"));
 app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/cart", require("./routes/cartRoutes"));
-
+app.use("/api/reports", require("./routes/reportRoutes"));
 /* -------- TEST ROUTE -------- */
 
 app.get("/", (req, res) => {
