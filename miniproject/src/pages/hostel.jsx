@@ -56,13 +56,17 @@ function Hostel() {
                 <div className="hostel-image-wrapper">
                   {/* Status Badge */}
                   <div
-                    className={`hostel-status-badge ${
-                      isAvailable ? "available" : "full"
-                    }`}
+                    className={`hostel-status-badge ${isAvailable ? "available" : "full"
+                      }`}
                   >
                     <span>
                       {isAvailable ? "📍 Available" : "❌ Full"}
                     </span>
+                  </div>
+
+                  {/* Hostel Type Badge */}
+                  <div className={`hostel-type-badge ${hostel.type?.toLowerCase() || 'common'}`}>
+                    {hostel.type || "Common"}
                   </div>
 
                   {/* Main Image */}
@@ -113,6 +117,12 @@ function Hostel() {
                       <div className="quick-info-item">
                         <span className="quick-info-item-icon">🔑</span>
                         <span>{hostel.availableRooms} available</span>
+                      </div>
+                    )}
+                    {hostel.distanceFromCollege && (
+                      <div className="quick-info-item" title="Distance from College">
+                        <span className="quick-info-item-icon">🎓</span>
+                        <span>{hostel.distanceFromCollege}</span>
                       </div>
                     )}
                   </div>

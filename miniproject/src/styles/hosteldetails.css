@@ -26,6 +26,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -366,6 +367,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -383,9 +385,12 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.4;
   }
@@ -581,6 +586,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }

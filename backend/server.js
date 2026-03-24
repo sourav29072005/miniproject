@@ -30,7 +30,7 @@ app.use("/api/messages", require("./routes/messageRoutes"));
 app.use("/api/chat", require("./routes/chatRoutes"));
 app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/cart", require("./routes/cartRoutes"));
-
+app.use("/api/reports", require("./routes/reportRoutes"));
 /* -------- TEST ROUTE -------- */
 
 app.get("/", (req, res) => {
@@ -54,12 +54,9 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
-
   // Join a specific conversation room
   socket.on("join_chat", (conversationId) => {
     socket.join(conversationId);
-    console.log(`User ${socket.id} joined chat ${conversationId}`);
   });
 
   // Handle incoming message
@@ -103,7 +100,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log(`User disconnected: ${socket.id}`);
   });
 });
 

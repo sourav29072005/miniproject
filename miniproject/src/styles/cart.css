@@ -33,7 +33,7 @@
 .seller-header-banner {
     background: linear-gradient(to right, #f8fafc, #ffffff);
     border-bottom: 1px solid #f1f5f9;
-    padding: 20px 24px;
+    padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -42,7 +42,7 @@
 .cart-item-row {
     display: flex;
     align-items: stretch;
-    padding: 24px;
+    padding: 16px 20px;
     border-bottom: 1px solid #f1f5f9;
     background: white;
     transition: background 0.2s ease;
@@ -57,9 +57,9 @@
 }
 
 .item-img-container {
-    width: 120px;
-    height: 120px;
-    border-radius: 16px;
+    width: 96px;
+    height: 96px;
+    border-radius: 12px;
     flex-shrink: 0;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.04);
@@ -80,7 +80,7 @@
 
 .checkout-action-bar {
     background: #ffffff;
-    padding: 24px;
+    padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -91,13 +91,14 @@
     background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
     color: white;
     font-weight: 600;
-    padding: 14px 32px;
-    border-radius: 12px;
-    box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+    padding: 10px 24px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px -5px rgba(79, 70, 229, 0.4);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    font-size: 14px;
 }
 
 .premium-checkout-btn:hover {
@@ -125,12 +126,13 @@
     border: 2px solid #e2e8f0;
     color: #475569;
     font-weight: 600;
-    padding: 12px 28px;
-    border-radius: 12px;
+    padding: 10px 20px;
+    border-radius: 10px;
     transition: all 0.2s;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    font-size: 14px;
 }
 
 .back-to-shop-btn:hover {
@@ -140,9 +142,9 @@
 }
 
 .remove-item-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,21 +173,21 @@
         padding: 16px;
     }
     .cart-item-row {
-        padding: 16px;
-        gap: 12px !important;
+        padding: 12px 16px;
+        gap: 10px !important;
     }
     .item-img-container {
-        width: 90px;
-        height: 90px;
-        border-radius: 12px;
+        width: 72px;
+        height: 72px;
+        border-radius: 8px;
     }
     .checkout-action-bar {
-        padding: 16px;
+        padding: 12px 16px;
     }
     .premium-checkout-btn {
         width: 100%;
         justify-content: center;
-        padding: 12px 24px;
+        padding: 10px 20px;
     }
     .remove-item-btn {
         width: 36px;

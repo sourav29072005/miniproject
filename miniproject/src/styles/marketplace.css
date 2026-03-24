@@ -6,8 +6,59 @@
 .search-container {
   display: flex;
   gap: 12px;
-  margin-bottom: 25px;
+  margin-bottom: 12px;
   align-items: center;
+}
+
+/* Category Pill Bar */
+.category-pill-bar {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 20px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.category-pill-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1.5px solid #e2e8f0;
+  background: white;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.category-pill:hover {
+  border-color: #0b4db7;
+  color: #0b4db7;
+  background: #e6f0ff;
+  transform: translateY(-1px);
+}
+
+.category-pill.active {
+  background: linear-gradient(135deg, #0b4db7, #4f46e5);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 4px 12px rgba(11, 77, 183, 0.3);
+}
+
+.category-pill-icon {
+  font-size: 14px;
+  line-height: 1;
 }
 
 .search-container input {

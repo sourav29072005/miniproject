@@ -3,11 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import api, { BASE_URL } from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import ReportModal from "../components/ReportModal";
 import "../styles/itemdetails.css";
 
 function ItemDetails() {
   const [item, setItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [lightboxImg, setLightboxImg] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
@@ -55,6 +57,17 @@ function ItemDetails() {
 
   useEffect(() => { loadItem(); }, [loadItem]);
 
+  useEffect(() => {
+    if (lightboxImg || showModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [lightboxImg, showModal]);
+
   if (loading) return <p className="loading-text">Loading item details...</p>;
   if (!item) return <p className="loading-text">Item not found.</p>;
 
@@ -62,7 +75,7 @@ function ItemDetails() {
     try {
       const res = await api.post("chat/start", { recipientId: item.sellerId });
       navigate(`/chat?convo=${res.data._id}`);
-    } catch(err) {
+    } catch (err) {
       console.error("Failed to start chat", err);
       alert("Failed to connect to seller.");
     }
@@ -81,7 +94,7 @@ function ItemDetails() {
 
   const confirmBuy = () => {
     if (item.status === "sold") { alert("Sorry! This item has just been sold."); navigate("/marketplace"); return; }
-    
+
     // Store as array of items for unified payment format
     localStorage.setItem("paymentItems", JSON.stringify([{
       itemId: item.id,
@@ -89,7 +102,7 @@ function ItemDetails() {
       title: item.title,
       sellerId: item.sellerId
     }]));
-    
+
     setShowModal(false);
     navigate("/payment");
   };
@@ -183,13 +196,13 @@ function ItemDetails() {
                 )}
               </div>
               <div className="seller-text-col">
-                <p className="seller-name-bold" style={{marginBottom: 0}}>{item.seller}</p>
-                <div style={{display: 'flex', alignItems: 'center', gap: '6px', margin: '4px 0'}}>
-                  <span style={{backgroundColor: '#e0e7ff', color: '#3730a3', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold'}}>{item.sellerLevel}</span>
-                  <span style={{fontSize: '12px', color: '#f59e0b', fontWeight: 'bold'}}>★ {item.averageRating}</span>
-                  <span style={{fontSize: '11px', color: '#64748b'}}>({item.totalReviews})</span>
+                <p className="seller-name-bold" style={{ marginBottom: 0 }}>{item.seller}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '4px 0' }}>
+                  <span style={{ backgroundColor: '#e0e7ff', color: '#3730a3', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>{item.sellerLevel}</span>
+                  <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 'bold' }}>★ {item.averageRating}</span>
+                  <span style={{ fontSize: '11px', color: '#64748b' }}>({item.totalReviews})</span>
                 </div>
-                <p className="seller-profile-link" style={{marginTop: 0}}>View full profile →</p>
+                <p className="seller-profile-link" style={{ marginTop: 0 }}>View full profile →</p>
               </div>
               <span className="seller-chevron">›</span>
             </div>
@@ -204,11 +217,11 @@ function ItemDetails() {
                 <>
                   <button className="contact-btn" onClick={contactSeller}>✉ Contact Seller</button>
                   {item.status !== "sold" ? (
-                    <div style={{display: 'flex', gap: '8px'}}>
-                      <button className="buy-final-btn" style={{flex: 1, backgroundColor: "#f3f4f6", color: "#374151"}} onClick={handleAddToCart} disabled={addingToCart}>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button className="buy-final-btn" style={{ flex: 1, backgroundColor: "#f3f4f6", color: "#ffffffff" }} onClick={handleAddToCart} disabled={addingToCart}>
                         {addingToCart ? "Adding..." : "🛒 Add to Cart"}
                       </button>
-                      <button className="buy-final-btn" style={{flex: 1}} onClick={() => setShowModal(true)}>
+                      <button className="buy-final-btn" style={{ flex: 1 }} onClick={() => setShowModal(true)}>
                         ⚡ Buy Now
                       </button>
                     </div>
@@ -218,6 +231,13 @@ function ItemDetails() {
                 </>
               )}
             </div>
+          )}
+          
+          {/* Report Button */}
+          {!isAdminView && !isSeller && (
+            <button className="btn-report-flag" onClick={() => setShowReportModal(true)}>
+              ⚑ Report this item
+            </button>
           )}
         </div>
       </div>
@@ -259,6 +279,14 @@ function ItemDetails() {
           </div>
         </div>
       )}
+
+      {/* REPORT MODAL */}
+      <ReportModal
+        isOpen={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        entityId={item.id}
+        entityModel="Item"
+      />
     </div>
   );
 }

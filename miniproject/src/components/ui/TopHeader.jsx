@@ -1,4 +1,4 @@
-import { Bell, Check, ExternalLink, Menu, X, Mail, ShoppingCart } from "lucide-react";
+import { Bell, Check, ExternalLink, Menu, X, Mail, ShoppingCart, MessageCircle } from "lucide-react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import ProfileDrawer from "./ProfileDrawer";
 import Messages from "../Messages";
@@ -17,7 +17,7 @@ const routeTitles = {
   "/notifications": "Notifications",
 };
 
-const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
+const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => { } }) => {
   const { user, logout } = useAuth();
   const { cartItems } = useCart();
   const location = useLocation();
@@ -29,17 +29,20 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
   const [unreadChatCount, setUnreadChatCount] = useState(0);
+  const [unreadAdminMsgCount, setUnreadAdminMsgCount] = useState(0);
   const notificationRef = useRef(null);
 
   const fetchData = async () => {
     try {
       // Fetch both notifications and chat counts in parallel
-      const [notifRes, chatRes] = await Promise.all([
-        getNotifications().catch(e => ({data: []})),
-        api.get("chat/unread-count").catch(e => ({data: {unreadCount: 0}}))
+      const [notifRes, chatRes, adminMsgRes] = await Promise.all([
+        getNotifications().catch(e => ({ data: [] })),
+        api.get("chat/unread-count").catch(e => ({ data: { unreadCount: 0 } })),
+        api.get("messages/unread-count").catch(e => ({ data: { unreadCount: 0 } }))
       ]);
       setNotifications(notifRes.data);
       setUnreadChatCount(chatRes.data.unreadCount || 0);
+      setUnreadAdminMsgCount(adminMsgRes.data.unreadCount || 0);
     } catch (error) {
       console.error("Failed to fetch header data:", error);
     }
@@ -52,8 +55,8 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
     // Socket listener for new unread chats anywhere in the app
     const socket = io(BASE_URL.replace("/api", ""));
     socket.on("new_unread_message", () => {
-       // Refresh just the chat count when a new message event arrives
-       api.get("chat/unread-count").then(res => setUnreadChatCount(res.data.unreadCount || 0)).catch(console.error);
+      // Refresh just the chat count when a new message event arrives
+      api.get("chat/unread-count").then(res => setUnreadChatCount(res.data.unreadCount || 0)).catch(console.error);
     });
 
     const handleClickOutside = (event) => {
@@ -97,7 +100,7 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-8 bg-gradient-primary text-white px-8 py-5 rounded-2xl shadow-lg relative overflow-visible z-10">
+      <div className="flex items-center justify-between mb-1 bg-gradient-primary text-white px-8 py-5 rounded-2xl shadow-lg relative overflow-visible z-10">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
@@ -118,9 +121,9 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
               <Menu className="w-5 h-5 text-white" />
             )}
           </button>
-          
+
           <div>
-            <p className="text-sm text-blue-100 mb-1">Current Page</p>
+            {/* <p className="text-sm text-blue-100 mb-1">Current Page</p> */}
             <h1 className="text-3xl font-bold">{title}</h1>
           </div>
         </div>
@@ -130,6 +133,7 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
           <button
             onClick={() => navigate("/cart")}
             className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"
+            title="Cart"
           >
             <ShoppingCart className="w-5 h-5 text-white" />
             {cartItems?.length > 0 && (
@@ -139,12 +143,27 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
             )}
           </button>
 
-          {/* Message Icon */}
+          {/* System Messages Icon */}
+          <button
+            onClick={() => setShowMessages(true)}
+            className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"
+            title="System Messages"
+          >
+            <Mail className="w-5 h-5 text-white" />
+            {unreadAdminMsgCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-primaryDark animate-pulse">
+                {unreadAdminMsgCount > 9 ? "9+" : unreadAdminMsgCount}
+              </span>
+            )}
+          </button>
+
+          {/* Chat Icon */}
           <button
             onClick={() => navigate("/chat")}
             className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"
+            title="Chat"
           >
-            <Mail className="w-5 h-5 text-white" />
+            <MessageCircle className="w-5 h-5 text-white" />
             {unreadChatCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-primaryDark animate-pulse">
                 {unreadChatCount > 9 ? "9+" : unreadChatCount}
@@ -157,6 +176,7 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
             <button
               onClick={() => setShowNotifications(!showNotifications)}
               className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"
+              title="Notifications"
             >
               <Bell className="w-5 h-5 text-white" />
               {unreadCount > 0 && (
@@ -229,6 +249,7 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => {} }) => {
           <button
             onClick={() => setDrawerOpen(true)}
             className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-semibold cursor-pointer border-2 border-white/30 transition-all duration-300 hover:scale-105 overflow-hidden"
+            title="Profile"
           >
             {user?.profilePic ? (
               <img

@@ -141,7 +141,6 @@ exports.getPublicProfile = async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
-        email: user.email,
         profilePic: user.profilePic,
         department: user.department,
         bio: user.bio,
@@ -306,5 +305,40 @@ exports.getMyEarnings = async (req, res) => {
   } catch (error) {
     console.error("Get my earnings error:", error);
     res.status(500).json({ error: "Failed to fetch earnings data" });
+  }
+};
+
+// 🔹 Change Password
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user.id);
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(400).json({ error: "Incorrect current password" });
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// 🔹 Delete Account
+exports.deleteAccount = async (req, res) => {
+  try {
+    const { password } = req.body;
+    const user = await User.findById(req.user.id);
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ error: "Incorrect password" });
+
+    await User.findByIdAndDelete(req.user.id);
+    res.json({ message: "Account deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
   }
 };
