@@ -12,7 +12,11 @@ connectDB();
 
 /* -------- MIDDLEWARE -------- */
 
-app.use(cors());
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
@@ -63,7 +67,7 @@ io.on("connection", (socket) => {
   socket.on("send_message", async (data) => {
     try {
       const { conversationId, senderId, text } = data;
-      
+
       // Save message to DB
       const newMessage = await ChatMessage.create({
         conversationId,
@@ -75,7 +79,7 @@ io.on("connection", (socket) => {
       const conversation = await Conversation.findById(conversationId);
       if (conversation) {
         conversation.lastMessage = newMessage._id;
-        
+
         // Increment unread count for the other participant
         conversation.participants.forEach(pId => {
           const pIdStr = pId.toString();
@@ -90,10 +94,10 @@ io.on("connection", (socket) => {
 
       // Broadcast to users in room
       io.to(conversationId).emit("receive_message", newMessage);
-      
+
       // Also broadcast an update to clients so their navbar badges update immediately
       io.emit("new_unread_message", { conversationId });
-      
+
     } catch (err) {
       console.error("Socket send_message error:", err);
     }
