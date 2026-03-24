@@ -167,3 +167,34 @@ exports.deleteAllMessages = async (req, res) => {
     res.status(500).json({ error: "Failed to delete messages" });
   }
 };
+
+// 🔹 GET USER MESSAGE HISTORY (ADMIN ONLY)
+exports.getUserMessageHistory = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    // Fetch all messages where this user is the recipient
+    const messages = await Message.find({ recipient: userId })
+      .populate("sender", "name profilePic email role")
+      .sort({ createdAt: -1 });
+
+    res.json(messages);
+  } catch (error) {
+    console.error("Get user message history error:", error);
+    res.status(500).json({ error: "Failed to fetch user message history" });
+  }
+};
+
+// 🔹 GET ALL MESSAGES (ADMIN ONLY)
+exports.getAllMessages = async (req, res) => {
+  try {
+    const messages = await Message.find()
+      .populate("sender", "name email profilePic role")
+      .populate("recipient", "name email profilePic role")
+      .sort({ createdAt: -1 });
+    res.json(messages);
+  } catch (error) {
+    console.error("Get all messages error:", error);
+    res.status(500).json({ error: "Failed to fetch all messages" });
+  }
+};

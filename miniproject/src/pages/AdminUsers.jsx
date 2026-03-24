@@ -9,6 +9,7 @@ function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userProducts, setUserProducts] = useState([]);
+  const [userMessages, setUserMessages] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [messageModal, setMessageModal] = useState(false);
@@ -53,6 +54,17 @@ function AdminUsers() {
     }
   }, []);
 
+  // Load message history for a specific user
+  const loadUserMessages = useCallback(async (userId) => {
+    try {
+      const response = await api.get(`messages/admin/user/${userId}`);
+      setUserMessages(response.data);
+    } catch (err) {
+      console.error("Failed to load user messages:", err);
+      setUserMessages([]);
+    }
+  }, []);
+
   useEffect(() => {
     // 🔐 protect admin route
     const user = JSON.parse(localStorage.getItem("user"));
@@ -67,12 +79,13 @@ function AdminUsers() {
     return () => window.removeEventListener("focus", loadUsers);
   }, [navigate, loadUsers]);
 
-  // When a user is selected, load their products
+  // When a user is selected, load their products and messages
   useEffect(() => {
     if (selectedUser) {
       loadUserProducts(selectedUser._id);
+      loadUserMessages(selectedUser._id);
     }
-  }, [selectedUser, loadUserProducts]);
+  }, [selectedUser, loadUserProducts, loadUserMessages]);
 
   const filteredUsers = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -90,6 +103,7 @@ function AdminUsers() {
   const handleCloseModal = () => {
     setSelectedUser(null);
     setUserProducts([]);
+    setUserMessages([]);
   };
 
   const handleOpenMessageModal = (user) => {
@@ -434,6 +448,47 @@ function AdminUsers() {
                             <span className="au-product-badge approved">Approved</span>
                           )}
                         </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Message History Section */}
+              <div className="au-modal-section">
+                <h3>Message & Warning History ({userMessages.length})</h3>
+                
+                {userMessages.length === 0 ? (
+                  <div className="au-no-products">
+                    <p>No messages or warnings have been sent to this user.</p>
+                  </div>
+                ) : (
+                  <div className="au-user-messages-list" style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "16px" }}>
+                    {userMessages.map((msg) => (
+                      <div key={msg._id} style={{ padding: "16px", borderRadius: "8px", border: "1px solid #e2e8f0", backgroundColor: "#f8fafc" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                          <span style={{ fontWeight: 600, color: "#0f172a" }}>{msg.subject}</span>
+                          <span style={{ fontSize: "0.85rem", color: "#64748b" }}>
+                            {new Date(msg.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                          <span style={{ 
+                            padding: "4px 8px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: "bold", 
+                            backgroundColor: msg.type === "warning" ? "#ffedd5" : msg.type === "alert" ? "#fee2e2" : "#e0e7ff",
+                            color: msg.type === "warning" ? "#ea580c" : msg.type === "alert" ? "#dc2626" : "#4f46e5"
+                          }}>
+                            {msg.type.toUpperCase()}
+                          </span>
+                          {msg.isRead ? (
+                           <span style={{ fontSize: "0.8rem", color: "#16a34a", fontWeight: "500" }}>✓ Read</span> 
+                          ) : (
+                           <span style={{ fontSize: "0.8rem", color: "#dc2626", fontWeight: "500" }}>• Unread</span> 
+                          )}
+                        </div>
+                        <p style={{ fontSize: "0.9rem", color: "#334155", margin: 0, whiteSpace: "pre-wrap", lineHeight: "1.5" }}>
+                          {msg.message}
+                        </p>
                       </div>
                     ))}
                   </div>

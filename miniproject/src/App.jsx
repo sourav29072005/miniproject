@@ -24,6 +24,8 @@ import Admin from "./pages/admin";
 import AdminHostels from "./pages/AdminHostels";
 import AdminItems from "./pages/AdminItems";
 import AdminUsers from "./pages/AdminUsers";
+import AdminReports from "./pages/AdminReports";
+import AdminMessages from "./pages/AdminMessages";
 import HostelDetails from "./pages/HostelDetails";
 import Profile from "./pages/Profile";
 
@@ -82,6 +84,22 @@ function App() {
               element={
                 <ProtectedRoute requireAdmin>
                   <AdminUsers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/reports"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <AdminReports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/messages"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <AdminMessages />
                 </ProtectedRoute>
               }
             />

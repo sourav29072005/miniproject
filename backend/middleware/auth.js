@@ -13,14 +13,12 @@ module.exports = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Auth Middleware - Decoded Token:", decoded);
 
     req.user = {
       id: decoded.id,
       role: decoded.role
     };
     req.userRole = decoded.role;
-    console.log("Auth Middleware - Setting req.user:", req.user);
 
     next();
 

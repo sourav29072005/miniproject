@@ -30,9 +30,12 @@ function AdminHostels() {
   const [roomType, setRoomType] = useState("");
   const [capacity, setCapacity] = useState("");
   const [availableRooms, setAvailableRooms] = useState("");
+  const [distanceFromCollege, setDistanceFromCollege] = useState("");
+  const [locationLink, setLocationLink] = useState("");
   const [facilities, setFacilities] = useState([]);
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("available");
+  const [type, setType] = useState("Common");
 
   // multiple images
   const [images, setImages] = useState([]);
@@ -72,9 +75,12 @@ function AdminHostels() {
     setRoomType("");
     setCapacity("");
     setAvailableRooms("");
+    setDistanceFromCollege("");
+    setLocationLink("");
     setFacilities([]);
     setDescription("");
     setStatus("available");
+    setType("Common");
     setImages([]);
     setImagePreviews([]);
     setSaveConfirm(false);
@@ -131,9 +137,12 @@ function AdminHostels() {
     setRoomType(hostel.roomType || "");
     setCapacity(hostel.capacity || "");
     setAvailableRooms(hostel.availableRooms || "");
+    setDistanceFromCollege(hostel.distanceFromCollege || "");
+    setLocationLink(hostel.locationLink || "");
     setFacilities(hostel.facilities || []);
     setDescription(hostel.description || "");
     setStatus(hostel.status || "available");
+    setType(hostel.type || "Common");
 
     const imgs = hostel.images || [];
     setImages(imgs);
@@ -175,10 +184,13 @@ function AdminHostels() {
       roomType: roomType.trim(),
       capacity: capacity.trim(),
       availableRooms: availableRooms.trim(),
+      distanceFromCollege: distanceFromCollege.trim(),
+      locationLink: locationLink.trim(),
       facilities,
       description: description.trim(),
       images,
       status,
+      type,
     };
 
     try {
@@ -281,10 +293,37 @@ function AdminHostels() {
             </div>
 
             <div className="ah-field">
+              <label>Distance from College</label>
+              <input
+                value={distanceFromCollege}
+                onChange={(e) => setDistanceFromCollege(e.target.value)}
+                placeholder="e.g., 2.5 km"
+              />
+            </div>
+
+            <div className="ah-field">
+              <label>Location Link (Google Maps)</label>
+              <input
+                value={locationLink}
+                onChange={(e) => setLocationLink(e.target.value)}
+                placeholder="https://maps.google.com/..."
+              />
+            </div>
+
+            <div className="ah-field">
               <label>Status</label>
               <select value={status} onChange={(e) => setStatus(e.target.value)}>
                 <option value="available">Available</option>
                 <option value="full">Full</option>
+              </select>
+            </div>
+            
+            <div className="ah-field">
+              <label>Hostel Type</label>
+              <select value={type} onChange={(e) => setType(e.target.value)}>
+                <option value="Common">Common</option>
+                <option value="Boys">Boys</option>
+                <option value="Girls">Girls</option>
               </select>
             </div>
 
@@ -385,6 +424,11 @@ function AdminHostels() {
                   />
                   <span className={h.status === "full" ? "badge badge-full" : "badge badge-avail"}>
                     {h.status === "full" ? "FULL" : "AVAILABLE"}
+                  </span>
+                  
+                  {/* Hostel Type Badge */}
+                  <span className={`badge-type ${h.type?.toLowerCase() || 'common'}`}>
+                    {h.type || "Common"}
                   </span>
                 </div>
 
