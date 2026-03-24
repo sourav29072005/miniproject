@@ -29,12 +29,12 @@ function DashboardLayout({ setIsLoggedIn }) {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 md:p-8 md:pt-6 overflow-y-auto flex flex-col items-center">
+      <main className="flex-1 p-6 md:p-8 md:pt-3 overflow-y-auto flex flex-col items-center">
         <div className="w-full flex-1 mb-12 max-w-[1600px] mx-auto">
           <TopHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
           <Outlet />
         </div>
-        <div className="w-full mt-auto max-w-[1600px] mx-auto pb-6">
+        <div className="w-full mt-auto">
           <Footer />
         </div>
       </main>

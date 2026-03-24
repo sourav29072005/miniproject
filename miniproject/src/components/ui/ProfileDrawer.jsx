@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { X, User, Settings, LogOut, Pencil, Package, TrendingUp, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { BASE_URL } from "../../api";
+import SettingsModal from "./SettingsModal";
 
 function ProfileDrawer({ open, onClose, onLogout }) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const email = user?.email || "user@cev.com";
   const name = user?.name || "User";
 
@@ -123,7 +126,10 @@ function ProfileDrawer({ open, onClose, onLogout }) {
               Earnings
             </button>
 
-            <button className="flex items-center gap-3 w-full text-left p-3 rounded-lg hover:bg-gray-100">
+            <button 
+              onClick={() => setSettingsOpen(true)}
+              className="flex items-center gap-3 w-full text-left p-3 rounded-lg hover:bg-gray-100"
+            >
               <Settings size={18} />
               Settings
             </button>
@@ -143,6 +149,8 @@ function ProfileDrawer({ open, onClose, onLogout }) {
 
         </div>
       </div>
+
+      <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </>
   );
 }

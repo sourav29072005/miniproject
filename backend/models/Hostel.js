@@ -17,6 +17,11 @@ const hostelSchema = new mongoose.Schema({
   status: {
     type: String,
     default: "available"
+  },
+  type: {
+    type: String,
+    enum: ["Boys", "Girls", "Common"],
+    default: "Common"
   }
 }, { timestamps: true });
 

@@ -184,6 +184,14 @@ function HostelDetails() {
             </div>
 
             <div className="hd-quick-item">
+              <div className="hd-quick-item-icon">🚻</div>
+              <div className="hd-quick-item-content">
+                <div className="hd-quick-item-label">Hostel Type</div>
+                <div className="hd-quick-item-value">{hostel.type || "Common"}</div>
+              </div>
+            </div>
+
+            <div className="hd-quick-item">
               <div className="hd-quick-item-icon">📞</div>
               <div className="hd-quick-item-content">
                 <div className="hd-quick-item-label">Contact</div>

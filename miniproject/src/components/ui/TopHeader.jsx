@@ -100,7 +100,7 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => { } }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-8 bg-gradient-primary text-white px-8 py-5 rounded-2xl shadow-lg relative overflow-visible z-10">
+      <div className="flex items-center justify-between mb-1 bg-gradient-primary text-white px-8 py-5 rounded-2xl shadow-lg relative overflow-visible z-10">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/10 rounded-full blur-2xl" />

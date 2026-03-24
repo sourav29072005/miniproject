@@ -94,7 +94,8 @@ exports.getMyOrders = async (req, res) => {
     try {
         const orders = await Order.find({ buyerId: req.user.id })
             .populate("itemId")
-            .populate("sellerId", "name email profilePic");
+            .populate("sellerId", "name email profilePic")
+            .sort({ createdAt: -1 });
         res.json(orders);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch orders" });
@@ -106,7 +107,8 @@ exports.getMySales = async (req, res) => {
     try {
         const orders = await Order.find({ sellerId: req.user.id })
             .populate("itemId")
-            .populate("buyerId", "name email profilePic");
+            .populate("buyerId", "name email profilePic")
+            .sort({ createdAt: -1 });
         res.json(orders);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch sales" });
@@ -249,8 +251,6 @@ exports.cancelOrder = async (req, res) => {
             await Item.findByIdAndUpdate(order.itemId, { status: "available" });
         }
 
-        console.log(`Order ${order._id} cancelled.`);
-
         // Create notification for seller
         try {
                 await Notification.create({
@@ -259,7 +259,6 @@ exports.cancelOrder = async (req, res) => {
                     type: "Order Cancelled",
                     orderId: order._id,
                 });
-                console.log("Cancellation notification created for seller:", order.sellerId);
         } catch (notifError) {
             console.error("Failed to create cancellation notification:", notifError);
         }

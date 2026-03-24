@@ -64,6 +64,11 @@ function Hostel() {
                     </span>
                   </div>
 
+                  {/* Hostel Type Badge */}
+                  <div className={`hostel-type-badge ${hostel.type?.toLowerCase() || 'common'}`}>
+                    {hostel.type || "Common"}
+                  </div>
+
                   {/* Main Image */}
                   {thumbnail ? (
                     <img

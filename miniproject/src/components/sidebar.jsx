@@ -32,12 +32,12 @@ function Sidebar({ closeSidebar }) {
 
   return (
     <>
-      <div className="w-64 bg-white shadow-card flex flex-col p-6 h-screen sticky top-0">
+      <div className="w-64 bg-white shadow-card flex flex-col px-6 pt-4 pb-6 h-screen sticky top-0">
         {/* Logo */}
         <Link 
           to="/" 
           onClick={handleNavClick}
-          className="flex items-center gap-3 mb-10 group hover:opacity-80 transition-opacity"
+          className="flex items-center gap-3 mb-6 group hover:opacity-80 transition-opacity"
         >
           <img src={logo} alt="CEV Connect" className="w-11 h-11 object-contain bg-primary/5 rounded-lg border border-primary/10 group-hover:shadow-md transition-shadow p-1" />
           <div className="flex flex-col">

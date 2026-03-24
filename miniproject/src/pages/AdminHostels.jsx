@@ -35,6 +35,7 @@ function AdminHostels() {
   const [facilities, setFacilities] = useState([]);
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("available");
+  const [type, setType] = useState("Common");
 
   // multiple images
   const [images, setImages] = useState([]);
@@ -79,6 +80,7 @@ function AdminHostels() {
     setFacilities([]);
     setDescription("");
     setStatus("available");
+    setType("Common");
     setImages([]);
     setImagePreviews([]);
     setSaveConfirm(false);
@@ -140,6 +142,7 @@ function AdminHostels() {
     setFacilities(hostel.facilities || []);
     setDescription(hostel.description || "");
     setStatus(hostel.status || "available");
+    setType(hostel.type || "Common");
 
     const imgs = hostel.images || [];
     setImages(imgs);
@@ -187,6 +190,7 @@ function AdminHostels() {
       description: description.trim(),
       images,
       status,
+      type,
     };
 
     try {
@@ -313,6 +317,15 @@ function AdminHostels() {
                 <option value="full">Full</option>
               </select>
             </div>
+            
+            <div className="ah-field">
+              <label>Hostel Type</label>
+              <select value={type} onChange={(e) => setType(e.target.value)}>
+                <option value="Common">Common</option>
+                <option value="Boys">Boys</option>
+                <option value="Girls">Girls</option>
+              </select>
+            </div>
 
             <div className="ah-field ah-span2">
               <label>Description</label>
@@ -411,6 +424,11 @@ function AdminHostels() {
                   />
                   <span className={h.status === "full" ? "badge badge-full" : "badge badge-avail"}>
                     {h.status === "full" ? "FULL" : "AVAILABLE"}
+                  </span>
+                  
+                  {/* Hostel Type Badge */}
+                  <span className={`badge-type ${h.type?.toLowerCase() || 'common'}`}>
+                    {h.type || "Common"}
                   </span>
                 </div>
 

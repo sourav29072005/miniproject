@@ -54,12 +54,9 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
-
   // Join a specific conversation room
   socket.on("join_chat", (conversationId) => {
     socket.join(conversationId);
-    console.log(`User ${socket.id} joined chat ${conversationId}`);
   });
 
   // Handle incoming message
@@ -103,7 +100,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log(`User disconnected: ${socket.id}`);
   });
 });
 

@@ -114,6 +114,34 @@
   color: #991b1b;
 }
 
+/* Hostel Type Badge */
+.hostel-type-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: white;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hostel-type-badge.boys {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.hostel-type-badge.girls {
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+}
+
+.hostel-type-badge.common {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+}
+
 /* Card Content */
 .hostel-card-content {
   padding: 20px;

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { registerUser, loginUser, updateProfile, getPublicProfile, getAllUsers, banUser, unbanUser, deleteUser } = require("../controllers/authController");
+const { registerUser, loginUser, updateProfile, getPublicProfile, getAllUsers, banUser, unbanUser, deleteUser, changePassword, deleteAccount } = require("../controllers/authController");
 const upload = require("../middleware/upload");
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
@@ -14,6 +14,10 @@ router.get("/admin/users", auth, admin, getAllUsers);
 router.put("/admin/ban", auth, admin, banUser);
 router.put("/admin/unban", auth, admin, unbanUser);
 router.delete("/admin/user/:id", auth, admin, deleteUser);
+
+// Account Settings
+router.post("/change-password", auth, changePassword);
+router.delete("/delete-account", auth, deleteAccount);
 
 // Get first admin user id for support messaging
 router.get("/admin-id", auth, async (req, res) => {

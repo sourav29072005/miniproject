@@ -190,6 +190,31 @@
   border-color: #2e7d32;
 }
 
+.badge-type {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.badge-type.boys {
+  background: #2196f3;
+}
+
+.badge-type.girls {
+  background: #e91e63;
+}
+
+.badge-type.common {
+  background: #757575;
+}
+
 .ah-info{
   flex: 1;
   min-width: 0;

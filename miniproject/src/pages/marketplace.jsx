@@ -88,7 +88,6 @@ function Marketplace() {
 
   const viewItem = (item) => {
     if (item.status === "sold") return; // safety
-    console.log("Selecting item to view:", item._id);
     localStorage.setItem("selectedItemId", item._id);
     navigate("/item-details");
   };
@@ -135,11 +134,19 @@ function Marketplace() {
       });
   }, [items, searchTerm, category, minPrice, maxPrice, showWishlistOnly, wishlistIds]);
 
+  const CATEGORIES = [
+    { label: "All", value: "", icon: "🛍️" },
+    { label: "Books", value: "Books", icon: "📚" },
+    { label: "Electronics", value: "Electronics", icon: "💻" },
+    { label: "Furniture", value: "Furniture", icon: "🪑" },
+    { label: "Hostel Essentials", value: "Hostel Essentials", icon: "🏠" },
+    { label: "Others", value: "Others", icon: "📦" },
+  ];
+
   return (
     <div className="marketplace-container">
 
-
-      {/* SEARCH BAR (unchanged) + FILTER + WISHLIST ICON */}
+      {/* SEARCH BAR + FILTER + WISHLIST ICON */}
       <div className="search-container">
         <input
           type="text"
@@ -156,7 +163,7 @@ function Marketplace() {
           <FaFilter />
         </button>
 
-        {/* ✅ Wishlist after filter icon */}
+        {/* Wishlist after filter icon */}
         <button
           className={showWishlistOnly ? "wishlist-icon-btn active" : "wishlist-icon-btn"}
           onClick={() => setShowWishlistOnly((v) => !v)}
@@ -168,6 +175,21 @@ function Marketplace() {
             <span className="wishlist-badge">{wishlistIds.length}</span>
           )}
         </button>
+      </div>
+
+      {/* CATEGORY PILL BAR */}
+      <div className="category-pill-bar">
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat.value}
+            className={`category-pill${category === cat.value ? " active" : ""}`}
+            onClick={() => setCategory(cat.value)}
+            type="button"
+          >
+            <span className="category-pill-icon">{cat.icon}</span>
+            {cat.label}
+          </button>
+        ))}
       </div>
 
       {/* FILTER POPUP */}

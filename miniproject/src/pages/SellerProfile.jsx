@@ -114,7 +114,7 @@ function SellerProfile() {
                                 <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-none mb-2">
                                     {seller.name}
                                 </h1>
-                                <p className="text-lg text-gray-500 font-medium">{seller.email}</p>
+
                             </div>
                             
                             {!isCurrentUser && (

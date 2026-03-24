@@ -62,15 +62,11 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", auth, async (req, res) => {
 
   try {
-
     const updated = await Hostel.findByIdAndUpdate(
-
       req.params.id,
       req.body,
       { new: true }
-
     );
-
     res.json(updated);
 
   } catch (err) {
