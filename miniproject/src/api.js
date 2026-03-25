@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const BASE_URL = "http://localhost:5000";
+export const BASE_URL = "https://cev-backend.onrender.com";
 const API_BASE_URL = `${BASE_URL}/api/`;
 
 const api = axios.create({
