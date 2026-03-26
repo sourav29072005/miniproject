@@ -277,14 +277,20 @@ function SellerProfile() {
                                             {/* Minimal Ordered Item Context */}
                                             {review.orderId && (
                                                 <div className="inline-flex items-center gap-3 pr-4 py-2 border border-gray-100 rounded-full bg-gray-50/50 hover:bg-gray-100 transition-colors w-max overflow-hidden max-w-full">
-                                                    {review.orderId.itemImage ? (
-                                                        <img src={getImageUrl(review.orderId.itemImage)} alt={review.orderId.itemTitle} className="w-8 h-8 rounded-full ml-1 bg-white shadow-sm object-cover" />
+                                                    {(review.orderId.itemImage || (review.orderId.itemId && review.orderId.itemId.image)) ? (
+                                                        <img 
+                                                            src={getImageUrl(review.orderId.itemImage || review.orderId.itemId.image)} 
+                                                            alt={review.orderId.itemTitle || (review.orderId.itemId && review.orderId.itemId.title)} 
+                                                            className="w-8 h-8 rounded-full ml-1 bg-white shadow-sm object-cover" 
+                                                        />
                                                     ) : (
                                                         <div className="w-8 h-8 rounded-full ml-1 bg-gray-200 flex items-center justify-center text-[10px]">🖼</div>
                                                     )}
                                                     <div className="flex flex-col truncate">
                                                         <span className="text-[10px] text-gray-400 uppercase font-black tracking-widest leading-none mb-0.5">Purchased</span>
-                                                        <span className="text-xs font-bold text-gray-700 leading-none truncate">{review.orderId.itemTitle || "Unknown Item"}</span>
+                                                        <span className="text-xs font-bold text-gray-700 leading-none truncate">
+                                                            {review.orderId.itemTitle || (review.orderId.itemId && review.orderId.itemId.title) || "Unknown Item"}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             )}

@@ -172,8 +172,8 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => { } }) => {
             )}
           </button>
 
-          {/* Notification - Hidden on very small screens, accessible in menu */}
-          <div className="relative hidden sm:block" ref={notificationRef}>
+          {/* Notification - Visible on all screens */}
+          <div className="relative" ref={notificationRef}>
             <button
               onClick={() => setShowNotifications(!showNotifications)}
               className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"

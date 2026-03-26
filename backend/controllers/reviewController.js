@@ -69,7 +69,14 @@ exports.getSellerReviews = async (req, res) => {
     const { sellerId } = req.params;
     const reviews = await Review.find({ sellerId })
       .populate("reviewerId", "name profilePic")
-      .populate("orderId", "itemTitle itemImage price")
+      .populate({
+        path: "orderId",
+        select: "itemTitle itemImage price itemId",
+        populate: {
+          path: "itemId",
+          select: "title image"
+        }
+      })
       .sort({ createdAt: -1 });
 
     res.json(reviews);
