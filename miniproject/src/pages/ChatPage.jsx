@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLocation } from "react-router-dom";
 import api, { BASE_URL } from "../api";
 import { getImageUrl } from "../utils/urlHelper";
 import { io } from "socket.io-client";
@@ -8,6 +9,7 @@ import "../styles/chat.css";
 
 function ChatPage() {
   const { user } = useAuth();
+  const location = useLocation();
   const [conversations, setConversations] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
