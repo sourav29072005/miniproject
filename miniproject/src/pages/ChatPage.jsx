@@ -32,21 +32,37 @@ function ChatPage() {
     const fetchConversations = async () => {
       try {
         const res = await api.get("chat/conversations");
-        setConversations(res.data);
+        const convos = res.data;
+        setConversations(convos);
         
-        // Auto-select chat if passed via state/nav
+        // Auto-select chat if passed via URL
         const queryParams = new URLSearchParams(window.location.search);
         const autoSelectId = queryParams.get("convo");
+        
         if (autoSelectId) {
-            const chatToSelect = res.data.find(c => c._id === autoSelectId);
-            if (chatToSelect) setActiveChat(chatToSelect);
+            const chatToSelect = convos.find(c => c._id === autoSelectId);
+            if (chatToSelect) {
+                setActiveChat(chatToSelect);
+            } else {
+                // If not found in list (brand new chat), fetch it specifically
+                try {
+                    const specificRes = await api.get(`chat/conversations`);
+                    const reFetched = specificRes.data.find(c => c._id === autoSelectId);
+                    if (reFetched) {
+                        setConversations(specificRes.data);
+                        setActiveChat(reFetched);
+                    }
+                } catch (e) {
+                    console.error("Failed to fetch specific conversation", e);
+                }
+            }
         }
       } catch (err) {
         console.error("Failed to fetch conversations", err);
       }
     };
     fetchConversations();
-  }, []);
+  }, [location.search]); // Re-run if query params change
 
   // 3. Load Active Chat Messages & Join Socket Room
   useEffect(() => {
@@ -301,11 +317,13 @@ function ChatPage() {
         </div>
       ) : (
         <div className="no-chat-selected">
-          <div className="empty-chat-icon">
-            <MessageSquareText size={32} />
+          <div className="empty-chat-icon shadow-xl">
+            <MessageSquareText size={36} />
           </div>
-          <h3 className="font-bold text-gray-700 text-xl mb-2">Your Messages</h3>
-          <p>Select a conversation from the sidebar to start chatting.</p>
+          <h3 className="font-extrabold text-gray-900 text-2xl mb-3 tracking-tight">Your Conversations</h3>
+          <p className="text-gray-500 max-w-xs text-center leading-relaxed">
+            Select a conversation from the list to start messaging or view your history.
+          </p>
         </div>
       )}
     </div>

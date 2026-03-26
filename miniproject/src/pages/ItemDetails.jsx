@@ -216,7 +216,7 @@ function ItemDetails() {
                 <p className="own-item-notice">🏷️ This is your listing — you cannot purchase your own item.</p>
               ) : (
                 <>
-                  <button className="contact-btn" onClick={contactSeller}>✉ Contact Seller</button>
+                  <button className="contact-btn" onClick={contactSeller}>✉ Message Seller</button>
                   {item.status !== "sold" ? (
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button className="buy-final-btn" style={{ flex: 1, backgroundColor: "#f3f4f6", color: "#ffffffff" }} onClick={handleAddToCart} disabled={addingToCart}>
