@@ -85,6 +85,12 @@ exports.startConversation = async (req, res) => {
     const { recipientId } = req.body;
     const senderId = req.user.id;
 
+    console.log(`[ChatController] startConversation: sender=${senderId}, recipient=${recipientId}`);
+
+    if (!recipientId) {
+       return res.status(400).json({ error: "Recipient ID is required" });
+    }
+
     if (recipientId === senderId) {
        return res.status(400).json({ error: "You cannot start a conversation with yourself" });
     }
@@ -92,7 +98,8 @@ exports.startConversation = async (req, res) => {
     // Verify recipient exists
     const recipient = await User.findById(recipientId);
     if (!recipient) {
-      return res.status(404).json({ error: "User not found" });
+      console.warn(`[ChatController] recipient not found: ${recipientId}`);
+      return res.status(404).json({ error: "User not found", recipientId });
     }
 
     // Check if conversation already exists

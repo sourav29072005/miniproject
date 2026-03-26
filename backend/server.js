@@ -26,12 +26,12 @@ app.use("/uploads", express.static("uploads"));
 /* -------- ROUTES -------- */
 
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/chat", require("./routes/chatRoutes"));
 app.use("/api/items", require("./routes/itemRoutes"));
 app.use("/api/hostels", require("./routes/hostels"));
 app.use("/api/orders", require("./routes/orderRoutes"));
 app.use("/api/notifications", require("./routes/notificationRoutes"));
 app.use("/api/messages", require("./routes/messageRoutes"));
-app.use("/api/chat", require("./routes/chatRoutes"));
 app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/cart", require("./routes/cartRoutes"));
 app.use("/api/reports", require("./routes/reportRoutes"));

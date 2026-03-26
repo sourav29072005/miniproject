@@ -73,12 +73,20 @@ function ItemDetails() {
   if (!item) return <p className="loading-text">Item not found.</p>;
 
   const contactSeller = async () => {
+    if (!item.sellerId || item.sellerId === "Unknown") {
+      console.error("[ItemDetails] Cannot start chat: Seller ID missing.");
+      alert("Seller information is not available for this item.");
+      return;
+    }
+
+    console.log(`[ItemDetails] Starting chat with recipientId: ${item.sellerId}`);
     try {
       const res = await api.post("chat/start", { recipientId: item.sellerId });
       navigate(`/chat?convo=${res.data._id}`);
     } catch (err) {
-      console.error("Failed to start chat", err);
-      alert("Failed to connect to seller.");
+      console.error("[ItemDetails] Failed to start chat", err);
+      const errorMsg = err.response?.data?.error || "Failed to connect to seller.";
+      alert(`${errorMsg} (Recipient ID: ${item.sellerId})`);
     }
   };
 

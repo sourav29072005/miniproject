@@ -48,12 +48,20 @@ function SellerProfile() {
     };
 
     const handleContactSeller = async () => {
+        if (!seller || !seller._id) {
+            console.error("[SellerProfile] Cannot start chat: Seller data not loaded.");
+            alert("Seller information is still loading. Please try again in a moment.");
+            return;
+        }
+
+        console.log(`[SellerProfile] Starting chat with recipientId: ${seller._id}`);
         try {
             const res = await api.post("chat/start", { recipientId: seller._id });
             navigate(`/chat?convo=${res.data._id}`);
         } catch (err) {
-            console.error("Failed to start chat", err);
-            alert("Failed to connect to seller.");
+            console.error("[SellerProfile] Failed to start chat", err);
+            const errorMsg = err.response?.data?.error || "Failed to connect to seller.";
+            alert(`${errorMsg} (Recipient ID: ${seller._id})`);
         }
     };
 
