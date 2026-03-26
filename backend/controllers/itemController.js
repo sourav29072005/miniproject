@@ -27,7 +27,7 @@ exports.addItem = async (req, res) => {
     res.status(201).json(item);
   } catch (error) {
     console.error("ADD ITEM CATCH ERROR:", error);
-    res.status(500).json({ error: "Failed to add item" });
+    res.status(500).json({ error: "Failed to add item", details: error.message });
   }
 };
 

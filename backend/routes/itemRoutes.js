@@ -18,7 +18,15 @@ const {
 } = require("../controllers/itemController");
 
 
-router.post("/", auth, upload.array("images", 5), addItem);
+router.post("/", auth, (req, res, next) => {
+  upload.array("images", 5)(req, res, (err) => {
+    if (err) {
+      console.error("Item upload error:", err);
+      return res.status(400).json({ error: "Image upload failed", details: err.message || err });
+    }
+    next();
+  });
+}, addItem);
 router.get("/", getItems);
 router.get("/my", auth, getUserItems);
 router.get("/pending", auth, admin, getPendingItems);

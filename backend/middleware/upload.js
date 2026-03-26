@@ -8,7 +8,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "cevconnect",
-    allowed_formats: ["jpg", "jpeg", "png"],
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
     transformation: [
       { width: 800, height: 800, crop: "limit" },
       { quality: "auto" }
@@ -18,7 +18,7 @@ const storage = new CloudinaryStorage({
 
 // File type validation (only images) ✅ (UNCHANGED)
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpg|jpeg|png/;
+  const allowedTypes = /jpg|jpeg|png|webp/;
   const extname = allowedTypes.test(
     path.extname(file.originalname).toLowerCase()
   );
@@ -27,7 +27,7 @@ const fileFilter = (req, file, cb) => {
   if (extname && mimetype) {
     cb(null, true);
   } else {
-    cb("Only JPG, JPEG, PNG images allowed!");
+    cb(new Error("Only JPG, JPEG, PNG, WEBP images allowed!"));
   }
 };
 
