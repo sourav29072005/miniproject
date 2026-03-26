@@ -290,13 +290,11 @@ function ChatPage() {
             {messages.map((msg, index) => {
               const isSentByMe = msg.sender === user.id;
               return (
-                <div key={index} className={`message-bubble-wrapper ${isSentByMe ? "sent" : "received"}`}>
-                  <div className={`message-bubble ${isSentByMe ? "sent" : "received"}`}>
-                    {msg.text}
-                    <span className="message-time">
-                      {new Date(msg.createdAt || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                    </span>
-                  </div>
+                <div key={index} className={`message-bubble ${isSentByMe ? "sent" : "received"}`}>
+                  {msg.text}
+                  <span className="message-time">
+                    {new Date(msg.createdAt || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                  </span>
                 </div>
               );
             })}
