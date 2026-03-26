@@ -7,7 +7,15 @@ const User = require("../models/User");
 
 router.post("/register", upload.single("profilePic"), registerUser);
 router.post("/login", loginUser);
-router.put("/update-profile", auth, upload.single("profilePic"), updateProfile);
+router.put("/update-profile", auth, (req, res, next) => {
+  upload.single("profilePic")(req, res, (err) => {
+    if (err) {
+      console.error("Multer/Cloudinary upload error:", err);
+      return res.status(400).json({ error: "Image upload failed", details: err.message || err });
+    }
+    next();
+  });
+}, updateProfile);
 router.get("/profile/:id", getPublicProfile);
 router.get("/my-earnings", auth, require("../controllers/authController").getMyEarnings);
 router.get("/admin/users", auth, admin, getAllUsers);
