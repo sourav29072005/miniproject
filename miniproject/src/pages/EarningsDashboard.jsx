@@ -105,7 +105,7 @@ function EarningsDashboard() {
             <div key={order._id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between transition hover:shadow-md cursor-pointer" onClick={() => navigate(`/order-details/${order._id}`)}>
               <div className="flex items-center gap-4">
                 {order.itemId?.image ? (
-                  <img src={`${BASE_URL}/uploads/${order.itemId.image}`} alt={order.itemTitle} className="w-16 h-16 object-cover rounded-lg" />
+                  <img src={getImageUrl(order.itemId.image)} alt={order.itemTitle} className="w-16 h-16 object-cover rounded-lg" />
                 ) : (
                   <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-2xl">🖼</div>
                 )}

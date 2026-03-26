@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api, { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 
 function OrderDetails() {
   const { id } = useParams();
@@ -37,11 +38,11 @@ function OrderDetails() {
         
         let image = null;
         if (hasItems && foundOrder.items[0].itemImage) {
-          image = `${BASE_URL}/uploads/${foundOrder.items[0].itemImage}`;
+          image = getImageUrl(foundOrder.items[0].itemImage);
         } else if (foundOrder.itemId && foundOrder.itemId.image) {
-          image = `${BASE_URL}/uploads/${foundOrder.itemId.image}`;
+          image = getImageUrl(foundOrder.itemId.image);
         } else if (foundOrder.itemImage) {
-          image = `${BASE_URL}/uploads/${foundOrder.itemImage}`;
+          image = getImageUrl(foundOrder.itemImage);
         }
 
         setOrder({
@@ -141,7 +142,7 @@ function OrderDetails() {
               <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 border-2 border-white shadow-sm flex-shrink-0">
                 {order.sellerPic ? (
                   <img
-                    src={`${BASE_URL}/uploads/${order.sellerPic}`}
+                    src={getImageUrl(order.sellerPic)}
                     alt={order.seller}
                     className="w-full h-full object-cover"
                   />

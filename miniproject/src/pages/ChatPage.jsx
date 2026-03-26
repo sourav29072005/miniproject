@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import api, { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import { io } from "socket.io-client";
 import { Send, MessageSquareText, Trash2 } from "lucide-react";
 import "../styles/chat.css";
@@ -203,7 +204,7 @@ function ChatPage() {
                 >
                   <div className="convo-avatar relative">
                     {otherUser.profilePic ? (
-                      <img src={`${BASE_URL}/uploads/${otherUser.profilePic}`} alt="" />
+                      <img src={getImageUrl(otherUser.profilePic)} alt="" />
                     ) : (
                       <span className="text-xl font-bold">{otherUser.name?.charAt(0) || otherUser.email?.charAt(0) || "U"}</span>
                     )}
@@ -235,7 +236,7 @@ function ChatPage() {
           <div className="chat-header">
             <div className="convo-avatar" style={{width: 40, height: 40}}>
               {getOtherParticipant(activeChat)?.profilePic ? (
-                <img src={`${BASE_URL}/uploads/${getOtherParticipant(activeChat).profilePic}`} alt="" />
+                <img src={getImageUrl(getOtherParticipant(activeChat).profilePic)} alt="" />
               ) : (
                 getOtherParticipant(activeChat)?.name?.charAt(0) || "U"
               )}

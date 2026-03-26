@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { BASE_URL } from "../../api";
 import SettingsModal from "./SettingsModal";
+import { getImageUrl } from "../../utils/urlHelper";
 
 function ProfileDrawer({ open, onClose, onLogout }) {
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ function ProfileDrawer({ open, onClose, onLogout }) {
               <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xl overflow-hidden border-2 border-primary/20">
                 {user?.profilePic ? (
                   <img
-                    src={`${BASE_URL}/uploads/${user.profilePic}`}
+                    src={getImageUrl(user.profilePic)}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />

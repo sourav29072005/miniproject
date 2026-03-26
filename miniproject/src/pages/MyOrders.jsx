@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import { 
   Package, MapPin, Calendar, Clock, MessageCircle, 
   CheckCircle, XCircle, Star, ChevronRight, ShoppingBag
@@ -34,11 +35,11 @@ function MyOrders() {
         
         let image = null;
         if (hasItems && order.items[0].itemImage) {
-          image = `${BASE_URL}/uploads/${order.items[0].itemImage}`;
+          image = getImageUrl(order.items[0].itemImage);
         } else if (order.itemId && order.itemId.image) {
-          image = `${BASE_URL}/uploads/${order.itemId.image}`;
+          image = getImageUrl(order.itemId.image);
         } else if (order.itemImage) {
-          image = `${BASE_URL}/uploads/${order.itemImage}`;
+          image = getImageUrl(order.itemImage);
         }
 
         return {
@@ -271,7 +272,7 @@ function MyOrders() {
                       <div className="flex items-center gap-2.5 mb-5">
                         <div className="w-7 h-7 rounded-full overflow-hidden bg-white border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)] flex-shrink-0">
                           {order.sellerPic ? (
-                            <img src={`${BASE_URL}/uploads/${order.sellerPic}`} alt={order.seller} className="w-full h-full object-cover" />
+                            <img src={getImageUrl(order.sellerPic)} alt={order.seller} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-gray-600 bg-gray-100 uppercase">
                               {order.seller.charAt(0)}

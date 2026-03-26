@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api, { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import "../styles/myitems.css";
 
 function MyItems() {
@@ -51,9 +52,9 @@ function MyItems() {
           rejectionReason: item.rejectionReason,
           rejectedAt: item.rejectedAt,
           image: item.images && item.images.length > 0
-            ? `${BASE_URL}/uploads/${item.images[0]}`
+            ? getImageUrl(item.images[0])
             : item.image
-              ? `${BASE_URL}/uploads/${item.image}`
+              ? getImageUrl(item.image)
               : null,
           status: item.status,
           isDeleted: false,
@@ -94,9 +95,9 @@ function MyItems() {
                // Create a ghost card for this specific deleted item
                let image = null;
                if (orderedItem.itemId && orderedItem.itemId.image) {
-                 image = `${BASE_URL}/uploads/${orderedItem.itemId.image}`;
+                 image = getImageUrl(orderedItem.itemId.image);
                } else if (orderedItem.itemImage) {
-                 image = `${BASE_URL}/uploads/${orderedItem.itemImage}`;
+                 image = getImageUrl(orderedItem.itemImage);
                }
 
                formattedItems.push({

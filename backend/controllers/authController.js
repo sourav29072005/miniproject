@@ -11,7 +11,7 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ error: "Registration restricted to @cev.ac.in emails only" });
     }
 
-    const profilePic = req.file ? req.file.filename : null;
+    const profilePic = req.file ? req.file.path : null;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -104,13 +104,20 @@ exports.updateProfile = async (req, res) => {
     if (department) updateData.department = department;
     if (graduationYear) updateData.graduationYear = graduationYear;
     if (bio) updateData.bio = bio;
-    if (req.file) updateData.profilePic = req.file.filename;
+    if (req.file) updateData.profilePic = req.file.path; // Use Cloudinary URL path
+    
+    console.log("Updating profile for user:", req.user.id, "with data:", updateData);
 
     const user = await User.findByIdAndUpdate(
       req.user.id,
       { $set: updateData },
       { new: true }
     );
+
+    if (!user) {
+      console.error("Profile update failed: User not found", req.user.id);
+      return res.status(404).json({ error: "User not found" });
+    }
 
     res.json({
       message: "Profile updated successfully",

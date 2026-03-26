@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api, { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import { ArrowLeft, User as UserIcon, Package, MessageCircle, Star, Flag } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import ReportModal from "../components/ReportModal";
@@ -96,7 +97,7 @@ function SellerProfile() {
                     <div className="w-32 h-32 md:w-44 md:h-44 flex-shrink-0 rounded-full overflow-hidden bg-gray-50 border-4 border-gray-100 shadow-sm relative">
                         {seller.profilePic ? (
                             <img
-                                src={`${BASE_URL}/uploads/${seller.profilePic}`}
+                                src={getImageUrl(seller.profilePic)}
                                 alt={seller.name}
                                 className="w-full h-full object-cover"
                             />
@@ -212,7 +213,7 @@ function SellerProfile() {
                                     >
                                         <div className="w-full aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden mb-4 shadow-sm relative transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
                                             <img
-                                                src={`${BASE_URL}/uploads/${item.image}`}
+                                                src={getImageUrl(item.image)}
                                                 alt={item.title}
                                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                             />
@@ -251,7 +252,7 @@ function SellerProfile() {
                                         
                                         <div className="w-14 h-14 flex-shrink-0">
                                             {review.reviewerId?.profilePic ? (
-                                                <img src={`${BASE_URL}/uploads/${review.reviewerId.profilePic}`} alt="Reviewer" className="w-full h-full rounded-full object-cover shadow-sm bg-gray-50" />
+                                                <img src={getImageUrl(review.reviewerId.profilePic)} alt="Reviewer" className="w-full h-full rounded-full object-cover shadow-sm bg-gray-50" />
                                             ) : (
                                                 <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center text-gray-400 font-black text-xl">
                                                     {review.reviewerId?.name?.charAt(0) || "U"}
@@ -277,7 +278,7 @@ function SellerProfile() {
                                             {review.orderId && (
                                                 <div className="inline-flex items-center gap-3 pr-4 py-2 border border-gray-100 rounded-full bg-gray-50/50 hover:bg-gray-100 transition-colors w-max overflow-hidden max-w-full">
                                                     {review.orderId.itemImage ? (
-                                                        <img src={`${BASE_URL}/uploads/${review.orderId.itemImage}`} alt={review.orderId.itemTitle} className="w-8 h-8 rounded-full ml-1 bg-white shadow-sm object-cover" />
+                                                        <img src={getImageUrl(review.orderId.itemImage)} alt={review.orderId.itemTitle} className="w-8 h-8 rounded-full ml-1 bg-white shadow-sm object-cover" />
                                                     ) : (
                                                         <div className="w-8 h-8 rounded-full ml-1 bg-gray-200 flex items-center justify-center text-[10px]">🖼</div>
                                                     )}

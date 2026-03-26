@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api, { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import "../styles/hosteldetails.css";
 
 function HostelDetails() {
@@ -58,7 +59,7 @@ function HostelDetails() {
   }
 
   const lightboxIndex = lightboxImg ? hostel.images.findIndex(img => {
-    const imgSrc = img.startsWith("data:") ? img : `${BASE_URL}/uploads/${img}`;
+    const imgSrc = getImageUrl(img);
     return imgSrc === lightboxImg;
   }) : -1;
 
@@ -66,7 +67,7 @@ function HostelDetails() {
     if (hostel.images && hostel.images.length > 0) {
       const nextIdx = (lightboxIndex + 1) % hostel.images.length;
       const img = hostel.images[nextIdx];
-      const imgSrc = img.startsWith("data:") ? img : `${BASE_URL}/uploads/${img}`;
+      const imgSrc = getImageUrl(img);
       setLightboxImg(imgSrc);
     }
   };
@@ -75,7 +76,7 @@ function HostelDetails() {
     if (hostel.images && hostel.images.length > 0) {
       const prevIdx = (lightboxIndex - 1 + hostel.images.length) % hostel.images.length;
       const img = hostel.images[prevIdx];
-      const imgSrc = img.startsWith("data:") ? img : `${BASE_URL}/uploads/${img}`;
+      const imgSrc = getImageUrl(img);
       setLightboxImg(imgSrc);
     }
   };
@@ -89,10 +90,10 @@ function HostelDetails() {
           {hostel.images && hostel.images.length > 0 ? (
             <div className="hd-cover-container">
               <img
-                src={hostel.images[0].startsWith("data:") ? hostel.images[0] : `${BASE_URL}/uploads/${hostel.images[0]}`}
+                src={getImageUrl(hostel.images[0])}
                 alt={hostel.name}
                 className="hd-cover-img"
-                onClick={() => setLightboxImg(hostel.images[0].startsWith("data:") ? hostel.images[0] : `${BASE_URL}/uploads/${hostel.images[0]}`)}
+                onClick={() => setLightboxImg(getImageUrl(hostel.images[0]))}
                 title="Click to view full size"
               />
             </div>
@@ -104,7 +105,7 @@ function HostelDetails() {
           {hostel.images?.length > 1 && (
             <div className="hd-gallery-full">
               {hostel.images.map((img, idx) => {
-                const imgSrc = img.startsWith("data:") ? img : `${BASE_URL}/uploads/${img}`;
+                const imgSrc = getImageUrl(img);
                 return (
                   <img
                     key={idx}

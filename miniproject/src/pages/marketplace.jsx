@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import api, { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import "../styles/marketplace.css";
 import { FaFilter, FaHeart, FaRegHeart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -264,7 +265,7 @@ function Marketplace() {
               {item.image && (
                 <div className="item-image-container">
                   <img
-                    src={`${BASE_URL}/uploads/${item.image}`}
+                    src={getImageUrl(item.image)}
                     alt={item.title}
                   />
                 </div>
@@ -287,7 +288,7 @@ function Marketplace() {
                   <div className="seller-avatar-small">
                     {item.user?.profilePic ? (
                       <img
-                        src={`${BASE_URL}/uploads/${item.user.profilePic}`}
+                        src={getImageUrl(item.user.profilePic)}
                         alt={item.user.name}
                       />
                     ) : (

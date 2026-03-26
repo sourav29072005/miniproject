@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
+import { getImageUrl } from "../utils/urlHelper";
 import "./setupProfile.css";
 
 function SetupProfile() {
@@ -71,6 +72,8 @@ function SetupProfile() {
                         <div className="avatar-preview">
                             {profilePic ? (
                                 <img src={URL.createObjectURL(profilePic)} alt="Preview" />
+                            ) : user?.profilePic ? (
+                                <img src={getImageUrl(user.profilePic)} alt="Profile" />
                             ) : (
                                 <div className="avatar-placeholder-large">?</div>
                             )}

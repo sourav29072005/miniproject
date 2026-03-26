@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import api, { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import "../styles/messages.css";
 
 function Messages({ isOpen, onClose }) {
@@ -101,7 +102,7 @@ function Messages({ isOpen, onClose }) {
                 >
                   <div className="msg-avatar">
                     {msg.sender?.profilePic ? (
-                      <img src={`${BASE_URL}/uploads/${msg.sender.profilePic}`} alt={msg.sender.name} />
+                      <img src={getImageUrl(msg.sender.profilePic)} alt={msg.sender.name} />
                     ) : (
                       <div className="msg-avatar-placeholder">
                         {msg.sender?.name?.charAt(0).toUpperCase()}
@@ -145,7 +146,7 @@ function Messages({ isOpen, onClose }) {
                 <div className="msg-sender-avatar">
                   {selectedMessage.sender?.profilePic ? (
                     <img
-                      src={`${BASE_URL}/uploads/${selectedMessage.sender.profilePic}`}
+                      src={getImageUrl(selectedMessage.sender.profilePic)}
                       alt={selectedMessage.sender.name}
                     />
                   ) : (

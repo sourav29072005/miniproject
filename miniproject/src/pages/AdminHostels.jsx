@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api, { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import "../styles/adminHostels.css";
 
 const FACILITY_OPTIONS = [
@@ -146,7 +147,7 @@ function AdminHostels() {
 
     const imgs = hostel.images || [];
     setImages(imgs);
-    setImagePreviews(imgs);
+    setImagePreviews(imgs.map(img => getImageUrl(img)));
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -419,7 +420,7 @@ function AdminHostels() {
                   {/* Since backend schema for hostels might be different, 
                       let's assume images are base64 if they start with data:, otherwise use uploads */}
                   <img
-                    src={h.images && h.images[0] ? (h.images[0].startsWith("data:") ? h.images[0] : `${BASE_URL}/uploads/${h.images[0]}`) : ""}
+                    src={h.images && h.images[0] ? getImageUrl(h.images[0]) : ""}
                     alt={h.name}
                   />
                   <span className={h.status === "full" ? "badge badge-full" : "badge badge-avail"}>
