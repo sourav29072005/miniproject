@@ -277,21 +277,41 @@ function SellerProfile() {
                                             {/* Minimal Ordered Item Context */}
                                             {review.orderId && (
                                                 <div className="inline-flex items-center gap-3 pr-4 py-2 border border-gray-100 rounded-full bg-gray-50/50 hover:bg-gray-100 transition-colors w-max overflow-hidden max-w-full">
-                                                    {(review.orderId.itemImage || (review.orderId.itemId && review.orderId.itemId.image)) ? (
-                                                        <img 
-                                                            src={getImageUrl(review.orderId.itemImage || review.orderId.itemId.image)} 
-                                                            alt={review.orderId.itemTitle || (review.orderId.itemId && review.orderId.itemId.title)} 
-                                                            className="w-8 h-8 rounded-full ml-1 bg-white shadow-sm object-cover" 
-                                                        />
-                                                    ) : (
-                                                        <div className="w-8 h-8 rounded-full ml-1 bg-gray-200 flex items-center justify-center text-[10px]">🖼</div>
-                                                    )}
-                                                    <div className="flex flex-col truncate">
-                                                        <span className="text-[10px] text-gray-400 uppercase font-black tracking-widest leading-none mb-0.5">Purchased</span>
-                                                        <span className="text-xs font-bold text-gray-700 leading-none truncate">
-                                                            {review.orderId.itemTitle || (review.orderId.itemId && review.orderId.itemId.title) || "Unknown Item"}
-                                                        </span>
-                                                    </div>
+                                                    {(() => {
+                                                        const order = review.orderId;
+                                                        const hasItems = order.items && order.items.length > 0;
+                                                        
+                                                        // Resolve Title
+                                                        const itemTitle = order.itemTitle || 
+                                                                        (order.itemId && order.itemId.title) || 
+                                                                        (hasItems && order.items[0].itemTitle) || 
+                                                                        (hasItems && order.items[0].itemId && order.items[0].itemId.title) || 
+                                                                        "Purchased Item";
+                                                        
+                                                        // Resolve Image
+                                                        const itemImage = order.itemImage || 
+                                                                        (order.itemId && order.itemId.image) || 
+                                                                        (hasItems && order.items[0].itemImage) || 
+                                                                        (hasItems && order.items[0].itemId && order.items[0].itemId.image);
+
+                                                        return (
+                                                            <>
+                                                                {itemImage ? (
+                                                                    <img 
+                                                                        src={getImageUrl(itemImage)} 
+                                                                        alt={itemTitle} 
+                                                                        className="w-8 h-8 rounded-full ml-1 bg-white shadow-sm object-cover" 
+                                                                    />
+                                                                ) : (
+                                                                    <div className="w-8 h-8 rounded-full ml-1 bg-gray-200 flex items-center justify-center text-[10px]">🖼</div>
+                                                                )}
+                                                                <div className="flex flex-col truncate">
+                                                                    <span className="text-[10px] text-gray-400 uppercase font-black tracking-widest leading-none mb-0.5">Purchased</span>
+                                                                    <span className="text-xs font-bold text-gray-700 leading-none truncate">{itemTitle}</span>
+                                                                </div>
+                                                            </>
+                                                        );
+                                                    })()}
                                                 </div>
                                             )}
                                         </div>

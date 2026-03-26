@@ -71,11 +71,17 @@ exports.getSellerReviews = async (req, res) => {
       .populate("reviewerId", "name profilePic")
       .populate({
         path: "orderId",
-        select: "itemTitle itemImage price itemId",
-        populate: {
-          path: "itemId",
-          select: "title image"
-        }
+        select: "itemTitle itemImage price itemId items",
+        populate: [
+          {
+            path: "itemId",
+            select: "title image"
+          },
+          {
+            path: "items.itemId",
+            select: "title image"
+          }
+        ]
       })
       .sort({ createdAt: -1 });
 
