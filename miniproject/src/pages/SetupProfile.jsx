@@ -47,7 +47,8 @@ function SetupProfile() {
 
             navigate("/");
         } catch (err) {
-            setError(err.response?.data?.error || "Failed to update profile");
+            const errorMsg = err.response?.data?.details || err.response?.data?.error || "Failed to update profile";
+            setError(errorMsg);
         } finally {
             setLoading(false);
         }
