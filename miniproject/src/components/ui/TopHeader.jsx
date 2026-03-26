@@ -100,7 +100,7 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => { } }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-1 bg-gradient-primary text-white px-8 py-5 rounded-2xl shadow-lg relative overflow-visible z-10">
+      <div className="flex items-center justify-between mb-1 bg-gradient-primary text-white px-3 md:px-8 py-2.5 md:py-5 rounded-2xl shadow-lg relative overflow-visible z-10">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
@@ -108,11 +108,11 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => { } }) => {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 flex items-center gap-4">
+        <div className="relative z-10 flex items-center gap-1 md:gap-4 flex-shrink-0">
           {/* Hamburger Menu - Mobile Only */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden p-2 hover:bg-white/20 rounded-lg transition-colors"
+            className="md:hidden p-1.5 hover:bg-white/20 rounded-lg transition-colors flex-shrink-0"
             aria-label="Toggle sidebar"
           >
             {sidebarOpen ? (
@@ -122,36 +122,36 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => { } }) => {
             )}
           </button>
 
-          <div>
+          <div className="flex-shrink-0">
             {/* <p className="text-sm text-blue-100 mb-1">Current Page</p> */}
-            <h1 className="text-3xl font-bold">{title}</h1>
+            <h1 className="text-lg sm:text-xl md:text-3xl font-bold truncate max-w-[120px] sm:max-w-none">{title}</h1>
           </div>
         </div>
 
-        <div className="relative z-20 flex items-center gap-6">
+        <div className="relative z-20 flex items-center gap-1 md:gap-4 ml-auto">
           {/* Cart Icon */}
           <button
             onClick={() => navigate("/cart")}
-            className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"
+            className="relative p-1.5 md:p-2.5 rounded-full hover:bg-white/20 transition-all duration-300 flex-shrink-0"
             title="Cart"
           >
-            <ShoppingCart className="w-5 h-5 text-white" />
+            <ShoppingCart className="w-4 h-4 md:w-5 h-5 text-white" />
             {cartItems?.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-primaryDark animate-pulse">
+              <span className="absolute -top-0.5 -right-0.5 md:-top-1 md:-right-1 bg-red-500 text-white text-[8px] md:text-[10px] font-bold px-1 md:px-1.5 py-0.5 rounded-full min-w-[15px] md:min-w-[18px] text-center border border-primaryDark animate-pulse">
                 {cartItems.length > 9 ? "9+" : cartItems.length}
               </span>
             )}
           </button>
 
-          {/* System Messages Icon */}
+          {/* System Messages Icon - Hidden on very small screens */}
           <button
             onClick={() => setShowMessages(true)}
-            className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"
+            className="relative p-1.5 md:p-2.5 rounded-full hover:bg-white/20 transition-all duration-300 flex-shrink-0 hidden xs:block"
             title="System Messages"
           >
-            <Mail className="w-5 h-5 text-white" />
+            <Mail className="w-4 h-4 md:w-5 h-5 text-white" />
             {unreadAdminMsgCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-primaryDark animate-pulse">
+              <span className="absolute -top-0.5 -right-0.5 md:-top-1 md:-right-1 bg-red-500 text-white text-[8px] md:text-[10px] font-bold px-1 md:px-1.5 py-0.5 rounded-full min-w-[15px] md:min-w-[18px] text-center border border-primaryDark animate-pulse">
                 {unreadAdminMsgCount > 9 ? "9+" : unreadAdminMsgCount}
               </span>
             )}
@@ -160,19 +160,19 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => { } }) => {
           {/* Chat Icon */}
           <button
             onClick={() => navigate("/chat")}
-            className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"
+            className="relative p-1.5 md:p-2.5 rounded-full hover:bg-white/20 transition-all duration-300 flex-shrink-0"
             title="Chat"
           >
-            <MessageCircle className="w-5 h-5 text-white" />
+            <MessageCircle className="w-4 h-4 md:w-5 h-5 text-white" />
             {unreadChatCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-primaryDark animate-pulse">
+              <span className="absolute -top-0.5 -right-0.5 md:-top-1 md:-right-1 bg-red-500 text-white text-[8px] md:text-[10px] font-bold px-1 md:px-1.5 py-0.5 rounded-full min-w-[15px] md:min-w-[18px] text-center border border-primaryDark animate-pulse">
                 {unreadChatCount > 9 ? "9+" : unreadChatCount}
               </span>
             )}
           </button>
 
-          {/* Notification */}
-          <div className="relative" ref={notificationRef}>
+          {/* Notification - Hidden on very small screens, accessible in menu */}
+          <div className="relative hidden sm:block" ref={notificationRef}>
             <button
               onClick={() => setShowNotifications(!showNotifications)}
               className="relative p-2.5 rounded-full hover:bg-white/20 transition-all duration-300"
@@ -248,7 +248,7 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => { } }) => {
           {/* Profile Icon */}
           <button
             onClick={() => setDrawerOpen(true)}
-            className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-semibold cursor-pointer border-2 border-white/30 transition-all duration-300 hover:scale-105 overflow-hidden"
+            className="w-8 h-8 md:w-11 md:h-11 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-semibold cursor-pointer border-2 border-white/30 transition-all duration-300 hover:scale-105 overflow-hidden flex-shrink-0 ml-1"
             title="Profile"
           >
             {user?.profilePic ? (
@@ -258,7 +258,7 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => { } }) => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span className="text-white font-bold">{initials}</span>
+              <span className="text-white text-xs sm:text-sm md:text-base font-bold">{initials}</span>
             )}
           </button>
         </div>

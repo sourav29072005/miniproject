@@ -10,7 +10,7 @@ exports.addItem = async (req, res) => {
       return res.status(401).json({ error: "Unauthorized: Missing user ID" });
     }
 
-    const images = req.files ? req.files.map(f => f.filename) : [];
+    const images = req.files ? req.files.map(f => f.path) : [];
     const itemData = {
       title,
       description,
@@ -177,13 +177,13 @@ exports.deleteItem = async (req, res) => {
     const itemToDelete = await Item.findById(req.params.id);
     if (itemToDelete) {
       await Order.updateMany(
-         { itemId: req.params.id },
-         { 
-            $set: { 
-              itemTitle: itemToDelete.title,
-              itemImage: itemToDelete.images && itemToDelete.images.length > 0 ? itemToDelete.images[0] : itemToDelete.image
-            } 
-         }
+        { itemId: req.params.id },
+        {
+          $set: {
+            itemTitle: itemToDelete.title,
+            itemImage: itemToDelete.images && itemToDelete.images.length > 0 ? itemToDelete.images[0] : itemToDelete.image
+          }
+        }
       );
     }
 

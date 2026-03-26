@@ -5,9 +5,16 @@
 /* Search row */
 .search-container {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   margin-bottom: 12px;
   align-items: center;
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 480px) {
+  .search-container {
+    gap: 6px;
+  }
 }
 
 /* Category Pill Bar */
@@ -198,7 +205,14 @@
 
 @media (max-width: 640px) {
   .items-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  .items-grid {
+    grid-template-columns: 1fr;
     gap: 16px;
   }
 }
@@ -264,11 +278,24 @@
 }
 
 .item-price-text {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #0b4db7;
   margin: 0;
   white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .item-title-text {
+    font-size: 14px;
+  }
+  .item-price-text {
+    font-size: 14px;
+  }
+  .item-content-wrapper {
+    padding: 12px;
+    gap: 8px;
+  }
 }
 
 /* Seller Badge */
