@@ -72,7 +72,8 @@ function AddItem() {
       setImages([]);
       setTimeout(() => setSuccess(false), 4000);
     } catch (err) {
-      const errorMsg = err.response?.data?.details || err.response?.data?.error || "Failed to add item. Please try again.";
+      const data = err.response?.data;
+      const errorMsg = data?.details || data?.error || (typeof data === 'string' ? data : null) || err.message || "Failed to add item. Please try again.";
       setError(errorMsg);
     } finally {
       setLoading(false);
