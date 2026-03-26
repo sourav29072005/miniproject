@@ -23,23 +23,43 @@ function SellerProfile() {
 
     useEffect(() => {
         const fetchSellerData = async () => {
+            console.log(`[SellerProfile] Fetching data for ID: ${id}`);
             try {
                 setLoading(true);
-                const [profileRes, itemsRes, reviewRes] = await Promise.all([
-                    api.get(`auth/profile/${id}`),
-                    api.get(`items/user/${id}`),
-                    api.get(`reviews/${id}`)
-                ]);
-                setSeller(profileRes.data.user);
-                setItems(itemsRes.data);
-                setReviews(reviewRes.data);
+                
+                // Fetch basic profile first as it's critical
+                const profileRes = await api.get(`auth/profile/${id}`);
+                console.log("[SellerProfile] Profile data received:", profileRes.data);
+                
+                if (profileRes.data && profileRes.data.user) {
+                    setSeller(profileRes.data.user);
+                } else {
+                    console.error("[SellerProfile] Profile response missing user object:", profileRes.data);
+                }
+
+                // Fetch items and reviews in parallel as they are secondary
+                try {
+                    const [itemsRes, reviewRes] = await Promise.all([
+                        api.get(`items/user/${id}`),
+                        api.get(`reviews/${id}`)
+                    ]);
+                    setItems(itemsRes.data || []);
+                    setReviews(reviewRes.data || []);
+                    console.log("[SellerProfile] Secondary data loaded:", { items: itemsRes.data?.length, reviews: reviewRes.data?.length });
+                } catch (secondaryErr) {
+                    console.warn("[SellerProfile] Failed to load secondary data (items/reviews):", secondaryErr);
+                }
+
             } catch (err) {
-                console.error("Failed to fetch seller data:", err);
+                console.error("[SellerProfile] CRITICAL: Failed to fetch seller profile:", err);
+                if (err.response?.status === 401) {
+                    console.error("[SellerProfile] 401 Unauthorized - logic check: Is this route protected?");
+                }
             } finally {
                 setLoading(false);
             }
         };
-        fetchSellerData();
+        if (id) fetchSellerData();
     }, [id]);
 
     const viewItem = (itemId) => {
