@@ -312,6 +312,7 @@ exports.getMyEarnings = async (req, res) => {
     const deliveredSales = await Order.find({ sellerId: req.user.id, status: "Delivered" })
       .populate("itemId", "title image price")
       .populate("buyerId", "name profilePic")
+      .select("itemId itemTitle itemImage price items totalPrice buyerId status createdAt updatedAt")
       .sort({ updatedAt: -1 });
 
     res.json({

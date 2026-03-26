@@ -103,25 +103,43 @@ function EarningsDashboard() {
       <h2 className="text-xl font-bold mb-4">Successful Handovers</h2>
       {earningsData.history && earningsData.history.length > 0 ? (
         <div className="space-y-4">
-          {earningsData.history.map((order) => (
-            <div key={order._id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between transition hover:shadow-md cursor-pointer" onClick={() => navigate(`/order-details/${order._id}`)}>
-              <div className="flex items-center gap-4">
-                {order.itemId?.image ? (
-                  <img src={getImageUrl(order.itemId.image)} alt={order.itemTitle} className="w-16 h-16 object-cover rounded-lg" />
-                ) : (
-                  <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-2xl">🖼</div>
-                )}
-                <div>
-                  <h3 className="font-bold text-gray-900">{order.itemTitle}</h3>
-                  <p className="text-sm text-gray-500">Delivered to: {order.buyerId?.name || "Buyer"}</p>
+          {earningsData.history.map((order) => {
+            const hasItems = order.items && order.items.length > 0;
+            const itemTitle = hasItems 
+              ? (order.items.length === 1 ? order.items[0].itemTitle : `${order.items.length} Items Ordered`) 
+              : (order.itemId ? order.itemId.title : (order.itemTitle || "Deleted Item"));
+            
+            let itemImage = null;
+            if (hasItems && order.items[0].itemImage) {
+              itemImage = order.items[0].itemImage;
+            } else if (order.itemId && order.itemId.image) {
+              itemImage = order.itemId.image;
+            } else if (order.itemImage) {
+              itemImage = order.itemImage;
+            }
+            
+            const displayPrice = order.totalPrice || order.price || 0;
+
+            return (
+              <div key={order._id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between transition hover:shadow-md cursor-pointer" onClick={() => navigate(`/order-details/${order._id}`)}>
+                <div className="flex items-center gap-4">
+                  {itemImage ? (
+                    <img src={getImageUrl(itemImage)} alt={itemTitle} className="w-16 h-16 object-cover rounded-lg" />
+                  ) : (
+                    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-2xl">🖼</div>
+                  )}
+                  <div>
+                    <h3 className="font-bold text-gray-900">{itemTitle}</h3>
+                    <p className="text-sm text-gray-500">Delivered to: {order.buyerId?.name || "Buyer"}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-bold text-green-600">+ ₹{displayPrice}</p>
+                  <p className="text-xs text-gray-400">{new Date(order.updatedAt).toLocaleDateString()}</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-lg font-bold text-green-600">+ ₹{order.price}</p>
-                <p className="text-xs text-gray-400">{new Date(order.updatedAt).toLocaleDateString()}</p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="bg-white p-8 rounded-xl border border-gray-200 text-center text-gray-500">
