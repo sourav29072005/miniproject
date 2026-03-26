@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import api, { BASE_URL } from "../api";
+import api from "../api";
 import { getImageUrl } from "../utils/urlHelper";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";

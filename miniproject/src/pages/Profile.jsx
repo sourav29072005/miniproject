@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { BASE_URL } from "../api";
 import { getImageUrl } from "../utils/urlHelper";
 import { ArrowLeft, Pencil, BookOpen, User as UserIcon } from "lucide-react";
 import "./profile.css";

@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { Trash2, ShoppingBag, ArrowRight, ShieldCheck, User } from "lucide-react";
-import { BASE_URL } from "../api";
 import { getImageUrl } from "../utils/urlHelper";
 import "../styles/cart.css";
 

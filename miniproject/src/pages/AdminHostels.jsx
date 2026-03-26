@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api, { BASE_URL } from "../api";
+import api from "../api";
 import { getImageUrl } from "../utils/urlHelper";
 import "../styles/adminHostels.css";
 
