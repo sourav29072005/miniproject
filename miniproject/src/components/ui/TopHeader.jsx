@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import api, { getNotifications, markNotificationAsRead, BASE_URL } from "../../api";
 import { io } from "socket.io-client";
+import { getImageUrl } from "../../utils/urlHelper";
 
 const routeTitles = {
   "/": "Home",
@@ -253,7 +254,7 @@ const TopHeader = ({ sidebarOpen = false, setSidebarOpen = () => { } }) => {
           >
             {user?.profilePic ? (
               <img
-                src={`${BASE_URL}/uploads/${user.profilePic}`}
+                src={getImageUrl(user.profilePic)}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />

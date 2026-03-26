@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import { ArrowLeft, Pencil, BookOpen, User as UserIcon } from "lucide-react";
 import "./profile.css";
 
@@ -27,7 +28,7 @@ function Profile() {
                     <div className="profile-avatar-large">
                         {user.profilePic ? (
                             <img
-                                src={`${BASE_URL}/uploads/${user.profilePic}`}
+                                src={getImageUrl(user.profilePic)}
                                 alt={user.name}
                                 className="w-full h-full object-cover"
                             />

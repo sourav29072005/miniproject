@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api, { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import "../styles/adminUsers.css";
 
 function AdminUsers() {
@@ -252,7 +253,7 @@ function AdminUsers() {
                   <div className="au-avatar">
                     {user.profilePic ? (
                       <img
-                        src={`${BASE_URL}/uploads/${user.profilePic}`}
+                        src={getImageUrl(user.profilePic)}
                         alt={user.name}
                       />
                     ) : (
@@ -311,7 +312,7 @@ function AdminUsers() {
                 <div className="au-modal-avatar">
                   {selectedUser.profilePic ? (
                     <img
-                      src={`${BASE_URL}/uploads/${selectedUser.profilePic}`}
+                      src={getImageUrl(selectedUser.profilePic)}
                       alt={selectedUser.name}
                     />
                   ) : (
@@ -421,7 +422,7 @@ function AdminUsers() {
                         <div className="au-product-img">
                           {product.image || (product.images && product.images.length > 0) ? (
                             <img
-                              src={`${BASE_URL}/uploads/${product.image || product.images[0]}`}
+                              src={getImageUrl(product.image || product.images[0])}
                               alt={product.title}
                             />
                           ) : (

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { Trash2, ShoppingBag, ArrowRight, ShieldCheck, User } from "lucide-react";
 import { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import "../styles/cart.css";
 
 function Cart() {
@@ -98,7 +99,7 @@ function Cart() {
                 <div className="flex items-center gap-3 md:gap-4 w-full sm:w-auto">
                   <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-full shadow-md border-2 border-white overflow-hidden bg-white">
                     {group.seller.profilePic ? (
-                      <img src={`${BASE_URL}/uploads/${group.seller.profilePic}`} alt="" className="w-full h-full object-cover" />
+                      <img src={getImageUrl(group.seller.profilePic)} alt="" className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">
                         <User size={20} />
@@ -129,7 +130,7 @@ function Cart() {
                     }}>
                       {(item.images?.length > 0 || item.image) ? (
                         <img 
-                          src={`${BASE_URL}/uploads/${item.images?.[0] || item.image}`} 
+                          src={getImageUrl(item.images?.[0] || item.image)} 
                           alt={item.title} 
                         />
                       ) : (

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api, { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import ReportModal from "../components/ReportModal";
@@ -31,9 +32,9 @@ function ItemDetails() {
       if (!freshItem) { navigate(isAdminView ? "/admin/items" : "/marketplace"); return; }
 
       const allImages = freshItem.images && freshItem.images.length > 0
-        ? freshItem.images.map(img => `${BASE_URL}/uploads/${img}`)
+        ? freshItem.images.map(img => getImageUrl(img))
         : freshItem.image
-          ? [freshItem.image.startsWith("data:") ? freshItem.image : `${BASE_URL}/uploads/${freshItem.image}`]
+          ? [getImageUrl(freshItem.image)]
           : [];
 
       setItem({
@@ -190,7 +191,7 @@ function ItemDetails() {
             >
               <div className="seller-avatar-lg">
                 {item.user?.profilePic ? (
-                  <img src={`${BASE_URL}/uploads/${item.user.profilePic}`} alt={item.seller} />
+                  <img src={getImageUrl(item.user.profilePic)} alt={item.seller} />
                 ) : (
                   <div className="initials">{item.seller.charAt(0).toUpperCase()}</div>
                 )}

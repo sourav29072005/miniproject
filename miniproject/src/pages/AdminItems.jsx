@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api, { BASE_URL } from "../api";
+import { getImageUrl } from "../utils/urlHelper";
 import "../styles/adminItems.css";
 
 function AdminItems() {
@@ -198,7 +199,7 @@ function AdminItems() {
                     {item.image || (item.images && item.images.length > 0) ? (
                       <img 
                         className="ai-img" 
-                        src={`${BASE_URL}/uploads/${item.image || item.images[0]}`} 
+                        src={getImageUrl(item.image || item.images[0])} 
                         alt={item.title}
                         title="Click to view all images"
                       />
@@ -353,7 +354,7 @@ function AdminItems() {
                       {images.map((img, idx) => (
                         <div key={idx} className="ai-gallery-item">
                           <img 
-                            src={`${BASE_URL}/uploads/${img}`} 
+                            src={getImageUrl(img)} 
                             alt={`${item.title} - ${idx + 1}`}
                           />
                           <p className="ai-gallery-label">{idx + 1}/{images.length}</p>
