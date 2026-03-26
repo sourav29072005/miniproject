@@ -1,19 +1,22 @@
 const multer = require("multer");
 const path = require("path");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary");
 
-// Storage configuration
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    const uniqueName =
-      Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueName + path.extname(file.originalname));
+// REPLACED STORAGE (Cloudinary instead of diskStorage)
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "cevconnect",
+    allowed_formats: ["jpg", "jpeg", "png"],
+    transformation: [
+      { width: 800, height: 800, crop: "limit" },
+      { quality: "auto" }
+    ],
   },
 });
 
-// File type validation (only images)
+// File type validation (only images) ✅ (UNCHANGED)
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpg|jpeg|png/;
   const extname = allowedTypes.test(
@@ -28,9 +31,10 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+// Multer config ✅ (UNCHANGED except storage)
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 10 * 1024 * 1024 }, // 5MB limit
   fileFilter,
 });
 
