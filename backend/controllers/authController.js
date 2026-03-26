@@ -98,25 +98,34 @@ exports.loginUser = async (req, res) => {
 // UPDATE PROFILE
 exports.updateProfile = async (req, res) => {
   try {
+    if (!req.user || !req.user.id) {
+       console.error("Auth middleware did not provide req.user.id");
+       return res.status(401).json({ error: "Authentication failed. No user ID found." });
+    }
+
     const { name, department, graduationYear, bio } = req.body;
     const updateData = {};
     if (name) updateData.name = name;
     if (department) updateData.department = department;
     if (graduationYear) updateData.graduationYear = graduationYear;
     if (bio) updateData.bio = bio;
-    if (req.file) updateData.profilePic = req.file.path; // Use Cloudinary URL path
     
-    console.log("Updating profile for user:", req.user.id, "with data:", updateData);
+    // Ensure req.file is present for Cloudinary uploads
+    if (req.file) {
+        updateData.profilePic = req.file.path; // Multer-storage-cloudinary provides URL string in path
+    }
+    
+    console.log("Updating profile for user ID:", req.user.id, "with data:", updateData);
 
     const user = await User.findByIdAndUpdate(
       req.user.id,
       { $set: updateData },
-      { new: true }
+      { new: true, runValidators: true } // Add runValidators for better error catching
     );
 
     if (!user) {
-      console.error("Profile update failed: User not found", req.user.id);
-      return res.status(404).json({ error: "User not found" });
+      console.error("Profile update failed: User not found in DB with ID:", req.user.id);
+      return res.status(404).json({ error: "User not found in database" });
     }
 
     res.json({
@@ -133,8 +142,12 @@ exports.updateProfile = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error("Update profile error:", error);
-    res.status(500).json({ error: "Failed to update profile" });
+    console.error("CRITICAL: Update profile exception:", error);
+    res.status(500).json({ 
+      error: "Critical server error during profile update", 
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+    });
   }
 };
 
