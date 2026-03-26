@@ -2,7 +2,6 @@ import { useState } from "react";
 import { X, User, Settings, LogOut, Pencil, Package, TrendingUp, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import api from "../../api";
 import SettingsModal from "./SettingsModal";
 import { getImageUrl } from "../../utils/urlHelper";
 
