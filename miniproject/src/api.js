@@ -1,10 +1,11 @@
 import axios from "axios";
 
-export const BASE_URL = "https://cev-backend.onrender.com";
-const API_BASE_URL = `${BASE_URL}/api/`;
+export const BASE_URL = window.location.hostname === "localhost" 
+    ? "http://localhost:5000" 
+    : "https://cev-backend.onrender.com";
 
 const api = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: `${BASE_URL}/api/`,
 });
 
 // Add a request interceptor to include the JWT token in headers
