@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import api, { BASE_URL } from "../api";
+import api from "../api";
 import { getImageUrl } from "../utils/urlHelper";
 import "../styles/marketplace.css";
 import { FaFilter, FaHeart, FaRegHeart } from "react-icons/fa";

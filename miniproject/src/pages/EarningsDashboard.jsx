@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api, { BASE_URL } from "../api";
+import api from "../api";
 import { getImageUrl } from "../utils/urlHelper";
 
 import { useAuth } from "../context/AuthContext";

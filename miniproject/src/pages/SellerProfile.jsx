@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api, { BASE_URL } from "../api";
+import api from "../api";
 import { getImageUrl } from "../utils/urlHelper";
 import { ArrowLeft, User as UserIcon, Package, MessageCircle, Star, Flag } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
